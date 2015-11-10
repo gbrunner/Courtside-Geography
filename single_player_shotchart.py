@@ -43,7 +43,7 @@ def get_last_game(player_id, season):
         temp=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7],
                 row[8], row[9], row[10],row[11], row[12], row[13], row[14],
                 row[15], row[16], row[17],row[18], row[19], row[20], three)
-        coord = ([row[17],row[18]])
+        coord = ([-row[17],row[18]])
         coords.append((coord,)+temp)
 
     return master_shots, coords
@@ -98,6 +98,21 @@ def get_rows(data_set, fields):
         for row in cursor:
             yield row
 
+def add_player_movement(fc):
+    field_to_add = ('MOVEMENT')
+    arcpy.AddField_management(fc, field_to_add, "TEXT", "", "", 255)
+
+    fields = ('GAME_ID','GAME_EVENT_ID',field_to_add)
+
+    with arcpy.da.UpdateCursor(fc, fields) as cursor:
+        for row in cursor:
+            gameid = row[0]
+            eventid = row[1]
+            row[2] = 'http://stats.nba.com/movement/#!/?GameID=%s&GameEventID=%s' % (gameid, eventid)
+            cursor.updateRow(row)
+
+    print('Done')
+
 ##def write_to_csv(fc, csv_file):
 ##    data_set = fc
 ##    output = csv_file
@@ -128,7 +143,7 @@ if __name__ == '__main__':
         player_name = player
         print('Looking at ' + player_name)
         player_id = players[player_name]
-        output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/top_10.gdb", player_name.replace(' ', '_') + '_' + season.replace('-','_'))
+        output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/Part_II.gdb", player_name.replace(' ', '_') + '_' + season.replace('-','_'))
         output_gdb = os.path.dirname(output_feature_class)
         print('Processing feature data')
         feature_data, coords = get_last_game(player_id, season)
@@ -136,5 +151,7 @@ if __name__ == '__main__':
         create_feature_class(output_gdb, output_feature_class)
         print('Populating features')
         populate_feature_class(coords, output_feature_class)
+        print('Adding Player Movement')
+        add_player_movement(output_feature_class)
 
     print('Done.')
