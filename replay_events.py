@@ -19,7 +19,7 @@ import math
 
 import arcpy
 
-fields = ('SHAPE@XY', 'TEAM_ID', 'PLAYER_ID', 'LOC_X', 'LOC_Y',
+fields = ('SHAPE@XY', 'TEAM_ID', 'PLAYER_ID', 'EVENT_ID','LOC_X', 'LOC_Y',
            'RADIUS', 'MOMENT', 'GAME_CLOCK', 'SHOT_CLOCK', 'TIME')
 
 def main(gameid, eventid):
@@ -43,7 +43,7 @@ def main(gameid, eventid):
     team_dict = {}
     team_dict[home['teamid']] = home['name']
     team_dict[visitor['teamid']] = visitor['name']
-    team_dict[-1] = 'Baseketball'
+    team_dict[-1] = 'Basketball'
 
     d = {}
     d[-1] = 'Basketball'
@@ -62,9 +62,9 @@ def main(gameid, eventid):
             #print(player[6])
             #print(clock_time)
             ct = datetime.datetime.strftime(clock_time, '%Y/%m/%d %H:%M:%S.%f')[:-5]
-            print(ct)
+            #print(ct)
 
-            player_data = (player[0], player[1], player[2], player[3], player[4], player[5], player[6], player[7], ct)
+            player_data = (player[0], player[1], eventid, player[2], player[3], player[4], player[5], player[6], player[7], ct)
             coord = ([10*(player[3]-25), 10*(player[2]-5.25)])
             coords.append((coord,)+player_data)
 ##            if player[1] == playerid:
@@ -85,6 +85,7 @@ def create_feature_class(output_gdb, output_feature_class):
         arcpy.CreateFeatureclass_management(output_gdb,feature_class,"POINT","#","DISABLED","DISABLED", "PROJCS['WGS_1984_Web_Mercator_Auxiliary_Sphere',GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Mercator_Auxiliary_Sphere'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Standard_Parallel_1',0.0],PARAMETER['Auxiliary_Sphere_Type',0.0],UNIT['Meter',1.0]]","#","0","0","0")
         arcpy.AddField_management(output_feature_class,"TEAM_ID","LONG", "", "", "")
         arcpy.AddField_management(output_feature_class,"PLAYER_ID","LONG", "", "", "")
+        arcpy.AddField_management(output_feature_class,"EVENT_ID","SHORT", "", "", "")
         arcpy.AddField_management(output_feature_class,"LOC_X","DOUBLE", "", "", "")
         arcpy.AddField_management(output_feature_class,"LOC_Y","DOUBLE", "", "", "")
         arcpy.AddField_management(output_feature_class,"RADIUS","DOUBLE", "", "", "")
@@ -139,14 +140,15 @@ def create_timestamp(quarter, gamedate, seconds):
 
 if __name__ == '__main__':
     game_id = '0021400015'
-    event_id = '346'
-    output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/Part_II_v2.gdb", 'Game_' + game_id + '_Event_' + '1_10')
+    #event_id = '346'
+    output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/Part_II_Gavin.gdb", 'Game_' + game_id + '_Event_' + '1_10')
     output_gdb = os.path.dirname(output_feature_class)
     print('Creating feature class.')
     create_feature_class(output_gdb, output_feature_class)
 
     event_id = ['1','2','3','4','5','6','7','8','9','10']
     for event in event_id:
+        print('Getting Event ' + str(event))
         print('Getting data.')
         event_data, player_dict, team_dict = main(game_id, event)
         print('Populating features.')
@@ -154,5 +156,11 @@ if __name__ == '__main__':
 
     print('Creating player name domain.')
     create_player_domain(output_gdb, output_feature_class, player_dict)
-    print('Craeting team subtype.')
+    print('Creating team subtype.')
     create_team_subtype(output_gdb, output_feature_class, team_dict)
+
+    print('Deleting Identical Records.')
+    #arcpy.DeleteIdentical_management(output_feature_class, "Shape;TEAM_ID;PLAYER_ID;LOC_X;LOC_Y;RADIUS;MOMENT;GAME_CLOCK;SHOT_CLOCK;TIME", "", "0")
+    arcpy.DeleteIdentical_management(output_feature_class, "Shape;TEAM_ID;PLAYER_ID;LOC_X;LOC_Y;RADIUS;GAME_CLOCK;SHOT_CLOCK;TIME", "", "0")
+
+
