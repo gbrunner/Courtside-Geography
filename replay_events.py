@@ -11,8 +11,6 @@
 from __future__ import division
 
 import requests
-##import urllib2
-##import json
 import os
 import datetime
 import math
@@ -25,11 +23,10 @@ fields = ('SHAPE@XY', 'TEAM_ID', 'PLAYER_ID', 'EVENT_ID','LOC_X', 'LOC_Y',
 def main(gameid, eventid):
     event_url = 'http://stats.nba.com/stats/locations_getmoments/?eventid=%s&gameid=%s' % (eventid, gameid)
 
-##    plays=urllib2.urlopen(event_url)
-##    data=json.load(plays)
-##    print(data)
-
     response = requests.get(event_url)
+    if response.status_code == 400:
+        print('Data not available for this filter.')
+        return -1,-1,-1
 
     response.json().keys()
 
@@ -46,7 +43,7 @@ def main(gameid, eventid):
     team_dict[-1] = 'Basketball'
 
     d = {}
-    d[-1] = 'Basketball'
+    d[1] = 'Basketball'
     for h in home['players']:
         d[h['playerid']] = h['firstname'] + ' ' + h['lastname']
 
@@ -63,14 +60,12 @@ def main(gameid, eventid):
             #print(clock_time)
             ct = datetime.datetime.strftime(clock_time, '%Y/%m/%d %H:%M:%S.%f')[:-5]
             #print(ct)
-
-            player_data = (player[0], player[1], eventid, player[2], player[3], player[4], player[5], player[6], player[7], ct)
+            if player[1] == -1:
+                player_data = (player[0], 1, eventid, player[2], player[3], player[4], player[5], player[6], player[7], ct)
+            else:
+                player_data = (player[0], player[1], eventid, player[2], player[3], player[4], player[5], player[6], player[7], ct)
             coord = ([10*(player[3]-25), 10*(player[2]-5.25)])
             coords.append((coord,)+player_data)
-##            if player[1] == playerid:
-##
-##            elif player[1] == -1:
-##                ball.append(player)
 
     #print(coords)
     return coords, d, team_dict
@@ -137,22 +132,55 @@ def create_timestamp(quarter, gamedate, seconds):
     dt = datetime.datetime.combine(gamedate, t)
     return dt
 
+def unique(lst):
+    return set(lst)
+
+def get_unique_events(fc):
+    init_event_num = -1
+    events = []
+    with arcpy.da.SearchCursor(fc, 'EVENT_ID') as cursor:
+        for row in cursor:
+            if row[0] != init_event_num:
+                events.append(row[0])
+                init_event_num = row[0]
+
+    unique_events = unique(events)
+
+    return unique_events
+
+def create_line_features(in_fc, gdb, unique_event_list):
+
+    for event in unique_event_list:
+        print('Creating lines for event ' + str(event))
+        layer = 'in_memory\\event_lyr_' + str(event)
+        query = '"EVENT_ID" = ' + str(event)
+        arcpy.MakeFeatureLayer_management(in_fc,layer,query,"#","#")
+        arcpy.PointsToLine_management(layer, os.path.join(gdb, 'event_'+str(event)), "PLAYER_ID", "TIME", "NO_CLOSE")
+
+def append_lines(gdb, output_line_fc):
+    arcpy.env.workspace = gdb
+    fc_list = arcpy.ListFeatureClasses('*',"Polyline")
+    arcpy.CreateFeatureclass_management(gdb, output_line_fc, "POLYLINE", fc_list[0])
+    arcpy.Append_management(fc_list, os.path.join(gdb, output_line_fc), 'NO_TEST', '', '')
+    for fc in fc_list:
+        arcpy.Delete_management(fc)
 
 if __name__ == '__main__':
     game_id = '0021400015'
-    #event_id = '346'
-    output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/Part_II_Gavin.gdb", 'Game_' + game_id + '_Event_' + '1_10')
+    first_event_num = 1
+    last_event_num = 120
+    output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/Part_III_b.gdb", 'Game_' + game_id + '_Event_' + str(first_event_num) + '_' + str(last_event_num))
     output_gdb = os.path.dirname(output_feature_class)
     print('Creating feature class.')
     create_feature_class(output_gdb, output_feature_class)
 
-    event_id = ['1','2','3','4','5','6','7','8','9','10']
-    for event in event_id:
+    for event in range(first_event_num, last_event_num+1):
         print('Getting Event ' + str(event))
         print('Getting data.')
         event_data, player_dict, team_dict = main(game_id, event)
-        print('Populating features.')
-        populate_feature_class(event_data, output_feature_class)
+        if event_data != -1:
+            print('Populating features.')
+            populate_feature_class(event_data, output_feature_class)
 
     print('Creating player name domain.')
     create_player_domain(output_gdb, output_feature_class, player_dict)
@@ -160,7 +188,13 @@ if __name__ == '__main__':
     create_team_subtype(output_gdb, output_feature_class, team_dict)
 
     print('Deleting Identical Records.')
-    #arcpy.DeleteIdentical_management(output_feature_class, "Shape;TEAM_ID;PLAYER_ID;LOC_X;LOC_Y;RADIUS;MOMENT;GAME_CLOCK;SHOT_CLOCK;TIME", "", "0")
-    arcpy.DeleteIdentical_management(output_feature_class, "Shape;TEAM_ID;PLAYER_ID;LOC_X;LOC_Y;RADIUS;GAME_CLOCK;SHOT_CLOCK;TIME", "", "0")
+    #arcpy.DeleteIdentical_management(output_feature_class, "Shape;TEAM_ID;PLAYER_ID;LOC_X;LOC_Y;RADIUS;GAME_CLOCK;SHOT_CLOCK;TIME", "", "0")
+    arcpy.DeleteIdentical_management(output_feature_class, "TEAM_ID;PLAYER_ID;GAME_CLOCK;TIME", "", "0")
 
+    event_list = get_unique_events(output_feature_class)
 
+    print('Creating Line Features')
+    create_line_features(output_feature_class, output_gdb, event_list)
+
+    print('Putting all the lines in one feature class.')
+    append_lines(output_gdb, 'quarter_1_filtered')
