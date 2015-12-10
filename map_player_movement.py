@@ -17,8 +17,13 @@ import os
 import datetime
 import math
 import time
+import re
 
 import arcpy
+
+arcpy.CheckOutExtension("Spatial")
+
+arcpy.env.overwriteOutput = True
 
 fields = ('SHAPE@XY', 'TEAM_ID', 'PLAYER_ID', 'EVENT_ID','LOC_X', 'LOC_Y',
            'RADIUS', 'MOMENT', 'GAME_CLOCK', 'SHOT_CLOCK', 'GAME_TIME', 'UNIX_TIME', 'QUARTER','VELOCITY')
@@ -116,7 +121,7 @@ def create_team_subtype(gdb, fc, subtype_dict):
     for code in subtype_dict:
         arcpy.AddSubtype_management(os.path.join(gdb,fc), code, subtype_dict[code])
 
-def create_player_domain(gdb, fc, player_dict):
+def create_player_domain(gdb, fc, line_fc, player_dict):
     domName = "Players"
     inField = "PLAYER_ID"
 
@@ -130,6 +135,8 @@ def create_player_domain(gdb, fc, player_dict):
 
     # Process: Constrain the material value of distribution mains
     arcpy.AssignDomainToField_management(fc, inField, domName)
+    ##print(line_fc)
+    #arcpy.AssignDomainToField_management(line_fc, inField, domName)
 
 def create_datestamp(gamedate):
     date = datetime.datetime.strptime(gamedate,'%Y-%m-%d')
@@ -145,10 +152,10 @@ def create_timestamp(quarter, gamedate, seconds):
 def unique(lst):
     return set(lst)
 
-def get_unique_events(fc):
+def get_unique_events(fc, field):
     init_event_num = -1
     events = []
-    with arcpy.da.SearchCursor(fc, 'EVENT_ID') as cursor:
+    with arcpy.da.SearchCursor(fc, field) as cursor:
         for row in cursor:
             if row[0] != init_event_num:
                 events.append(row[0])
@@ -161,33 +168,35 @@ def get_unique_events(fc):
 def create_line_features(in_fc, gdb, unique_event_list, dictionary):
 
     for event in unique_event_list:
-        print('Creating lines for event ' + str(event))
-        layer = 'in_memory\\event_lyr_' + str(event)
-        query = '"EVENT_ID" = ' + str(event)
-        arcpy.MakeFeatureLayer_management(in_fc,layer,query,"#","#")
-        arcpy.PointsToLine_management(layer, os.path.join(gdb, 'event_'+str(event)), "PLAYER_ID", "GAME_TIME", "NO_CLOSE")
-        arcpy.AddField_management(os.path.join(gdb, 'event_'+str(event)),"TEAM_ID","LONG", "", "", "")
-        arcpy.AddField_management(os.path.join(gdb, 'event_'+str(event)),"QUARTER","SHORT", "", "", "")
-        arcpy.AddField_management(os.path.join(gdb, 'event_'+str(event)), "START_TIME", "TEXT", "", "", 30)
+        event_lines = os.path.join(gdb, 'event_'+str(event))
+        if arcpy.Exists(event_lines) == False:
+            print('Creating lines for event ' + str(event))
+            layer = 'in_memory\\event_lyr_' + str(event)
+            query = '"EVENT_ID" = ' + str(event)
+            arcpy.MakeFeatureLayer_management(in_fc,layer,query,"#","#")
+            arcpy.PointsToLine_management(layer, event_lines, "PLAYER_ID", "GAME_TIME", "NO_CLOSE")
+            arcpy.AddField_management(os.path.join(gdb, 'event_'+str(event)),"TEAM_ID","LONG", "", "", "")
+            arcpy.AddField_management(os.path.join(gdb, 'event_'+str(event)),"QUARTER","SHORT", "", "", "")
+            arcpy.AddField_management(os.path.join(gdb, 'event_'+str(event)), "START_TIME", "TEXT", "", "", 30)
 
-        #Get Start time of lines
-        with arcpy.da.SearchCursor(layer, ('GAME_TIME', 'QUARTER')) as cursor:
-            first_time = cursor.next()
+            #Get Start time of lines
+            with arcpy.da.SearchCursor(layer, ('GAME_TIME', 'QUARTER')) as cursor:
+                first_time = cursor.next()
 
-        print(first_time[0])
-        #Add start time of lines to line features
-        with arcpy.da.UpdateCursor(os.path.join(gdb, 'event_'+str(event)), ('START_TIME', 'PLAYER_ID','TEAM_ID', 'QUARTER')) as cursor:
-            for row in cursor:
-                row[0] = first_time[0]
-                row[2] = dictionary[row[1]]
-                row[3] = first_time[1]
-                cursor.updateRow(row)
+            print(first_time[0])
+            #Add start time of lines to line features
+            with arcpy.da.UpdateCursor(os.path.join(gdb, 'event_'+str(event)), ('START_TIME', 'PLAYER_ID','TEAM_ID', 'QUARTER')) as cursor:
+                for row in cursor:
+                    row[0] = first_time[0]
+                    row[2] = dictionary[row[1]]
+                    row[3] = first_time[1]
+                    cursor.updateRow(row)
 
 def append_lines(gdb, output_line_fc):
     arcpy.env.workspace = gdb
     fc_list = arcpy.ListFeatureClasses('*',"Polyline")
-    arcpy.CreateFeatureclass_management(gdb, output_line_fc, "POLYLINE", fc_list[0])
-    arcpy.Append_management(fc_list, os.path.join(gdb, output_line_fc), 'NO_TEST', '', '')
+    arcpy.CreateFeatureclass_management(gdb, os.path.basename(output_line_fc), "POLYLINE", fc_list[0],"DISABLED","DISABLED","PROJCS['WGS_1984_Web_Mercator_Auxiliary_Sphere',GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Mercator_Auxiliary_Sphere'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Standard_Parallel_1',0.0],PARAMETER['Auxiliary_Sphere_Type',0.0],UNIT['Meter',1.0]];-20037700 -30241100 10000;-100000 10000;-100000 10000;0.001;0.001;0.001;IsHighPrecision","#","0","0","0")
+    arcpy.Append_management(fc_list, output_line_fc, 'NO_TEST', '', '')
     for fc in fc_list:
         arcpy.Delete_management(fc)
 
@@ -203,14 +212,17 @@ def create_line_density_raster(gdb, in_fc, team_dict):
 
 def create_line_density_raster_per_quarter(gdb, in_fc, team_dict, quarters):
     for team in team_dict:
+        t = team_dict[team]
+        t.replace(' ', '_')
         for quarter in quarters:
-            t = team_dict[team]
-            t.replace(' ', '_')
-            print('Creating line density raster for ' + t + ' during quarter ' + str(quarter))
-            layer = 'in_memory\\team_lyr_' + str(t)+ str(quarter)
-            query = '"TEAM_ID" = ' + str(team) + 'AND "QUARTER" = ' + str(quarter)
-            arcpy.MakeFeatureLayer_management(os.path.join(gdb,in_fc),layer,query,"#","#")
-            arcpy.gp.LineDensity_sa(layer, "NONE", os.path.join(gdb, t + '_Quarter_'+ str(quarter)), "5", "5", "SQUARE_MAP_UNITS")
+            out_fc = os.path.join(gdb, t + '_Quarter_'+ str(quarter))
+            if arcpy.Exists(out_fc) == False:
+                print('Creating line density raster for ' + t + ' during quarter ' + str(quarter))
+                print(out_fc)
+                layer = 'in_memory\\team_lyr_' + str(t)+ str(quarter)
+                query = '"TEAM_ID" = ' + str(team) + 'AND "QUARTER" = ' + str(quarter)
+                arcpy.MakeFeatureLayer_management(in_fc,layer,query,"#","#")  #os.path.join(gdb,in_fc)
+                arcpy.gp.LineDensity_sa(layer, "NONE", out_fc, "5", "5", "SQUARE_MAP_UNITS")
 
 def find_mean_center_of_movement(gdb, in_fc, team_dict):
     print('Creating mean center of movement for entire game')
@@ -227,6 +239,25 @@ def find_mean_center_of_movement_per_quarter(gdb, in_fc, team_dict, quarters):
         arcpy.MakeFeatureLayer_management(in_fc,layer,query,"#","#")
         arcpy.MeanCenter_stats(layer,os.path.join(gdb, 'MeanCenterOfAction_Quarter_'+ str(quarter)), '#', '#', '#')
 
+def create_point_density_raster(in_points, gdb, player_list, player_dictionary):
+    # Create the Neighborhood Object
+    radius = 10
+    neighborhood = arcpy.sa.NbrCircle(radius, "MAP")
+    for player in player_list:
+        query = '"PLAYER_ID" = ' + str(player)
+        ras_name = 'player_movement_rasters_'+player_dictionary[player]
+        print('Creating ' + str(ras_name))
+        ras_name.replace(' ', '_')
+        ras_name = re.sub('[^0-9a-zA-Z]+', '_', ras_name)
+        out_ras = os.path.join(gdb,ras_name)
+        if arcpy.Exists(out_ras) == True:
+            player_lyr = 'in_memory\\'+str(player)+'movement_map'
+            print('Making feature layer.')
+            arcpy.MakeFeatureLayer_management(in_points, player_lyr, query, '#', '#')
+            print('Getting point density raster '+ ras_name)
+            arcpy.gp.PointDensity_sa(player_lyr, "NONE", out_ras, 2.5, "Circle 10 MAP", "SQUARE_KILOMETERS") #"Circle 10 MAP"
+
+
 if __name__ == '__main__':
 
     t0 = time.clock()
@@ -234,12 +265,15 @@ if __name__ == '__main__':
     game_id = '0021500234'#'0021500177'#'0021400015'
     first_event_num = 1 #346 #1
     last_event_num = 550 #564 #350 #122
-    output_line_fc =  'Entire_Game'
-    output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/Part_III_OKC_DET.gdb", 'Game_' + game_id + '_Event_' + str(first_event_num) + '_' + str(last_event_num))
-    output_gdb = os.path.dirname(output_feature_class)
+    output_gdb = r"C:\PROJECTS\R&D\NBA\Player_Movement_Maps_OKC_DET.gdb"
+    output_line_fc =  os.path.join(output_gdb, 'Game_as_lines_' + game_id + '_Event_' + str(first_event_num) + '_' + str(last_event_num))
+    output_point_fc = os.path.join(output_gdb, 'Game_as_points_' + game_id + '_Event_' + str(first_event_num) + '_' + str(last_event_num))
+    output_point_fc_sorted = output_point_fc+'_Sorted'
+
     first_event_data, player_dictionary, team_dictionary, player_team_dictionary = main(game_id, first_event_num)
+
 ##    print('Creating feature class.')
-##    create_feature_class(output_gdb, output_feature_class)
+##    create_feature_class(output_gdb, output_point_fc)
 ##
 ##    for event in range(first_event_num, last_event_num+1):
 ##        print('Getting Event ' + str(event))
@@ -247,39 +281,52 @@ if __name__ == '__main__':
 ##        event_data, player_dict, team_dict, player_team_dict = main(game_id, event)
 ##        if event_data != -1:
 ##            print('Populating features.')
-##            populate_feature_class(event_data, output_feature_class)
+##            populate_feature_class(event_data, output_point_fc)
 ##
 ##    print('Creating player name domain.')
-##    create_player_domain(output_gdb, output_feature_class, player_dictionary)
+##    create_player_domain(output_gdb, output_point_fc, output_line_fc, player_dictionary)
 ##    print('Creating team subtype.')
-##    create_team_subtype(output_gdb, output_feature_class, team_dictionary)
+##    create_team_subtype(output_gdb, output_point_fc, team_dictionary)
+##
+##    arcpy.CopyFeatures_management(output_point_fc, output_point_fc+'_NoFilteringOrSorting')
+##
+##    print('Deleting Identical Records.')
+##    #arcpy.DeleteIdentical_management(output_feature_class, "Shape;TEAM_ID;PLAYER_ID;LOC_X;LOC_Y;RADIUS;GAME_CLOCK;SHOT_CLOCK;TIME", "", "0")
+##    arcpy.DeleteIdentical_management(output_point_fc, "TEAM_ID;PLAYER_ID;GAME_CLOCK;GAME_TIME", "", "0")
+##
+##    #Sort so we don't get artifacts in lines and playback.
+##    arcpy.Sort_management(output_point_fc, output_point_fc_sorted, "QUARTER ASCENDING;GAME_CLOCK DESCENDING", "UR")
 
-    print('Deleting Identical Records.')
-    #arcpy.DeleteIdentical_management(output_feature_class, "Shape;TEAM_ID;PLAYER_ID;LOC_X;LOC_Y;RADIUS;GAME_CLOCK;SHOT_CLOCK;TIME", "", "0")
-    arcpy.DeleteIdentical_management(output_feature_class, "TEAM_ID;PLAYER_ID;GAME_CLOCK;GAME_TIME", "", "0")
+    event_list = get_unique_events(output_point_fc_sorted, 'EVENT_ID')
+    print(event_list)
+    quarter_list = get_unique_events(output_point_fc_sorted, 'QUARTER')
+    print(quarter_list)
+    player_list = get_unique_events(output_point_fc_sorted, 'PLAYER_ID')
+    print(player_list)
+    print(player_dictionary)
 
-    event_list = get_unique_events(output_feature_class)
+    create_point_density_raster(output_point_fc_sorted, output_gdb, player_list, player_dictionary)
 
-    print('Creating Line Features')
-    create_line_features(output_feature_class, output_gdb, event_list, player_team_dictionary)
-
-    print('Putting all the lines in one feature class.')
-    append_lines(output_gdb, output_line_fc)
-
-    print('Creating team subtype for line features.')
-    create_team_subtype(output_gdb, output_line_fc, team_dict)
-
-    print('Running line density analysis.')
-    create_line_density_raster(output_gdb, output_line_fc, team_dict)
-
-    print('Running line density analysis per quarter.')
-    create_line_density_raster_per_quarter(output_gdb, output_line_fc, team_dict, [1,2,3,4])
-
-    print('Finding mean center of action.')
-    find_mean_center_of_movement(output_gdb, output_feature_class, team_dict)
-
-    print('Finding mean center per quarter.')
-    find_mean_center_of_movement_per_quarter(output_gdb, output_feature_class, team_dict, [1,2,3,4])
+##    print('Creating Line Features')
+##    create_line_features(output_point_fc_sorted, output_gdb, event_list, player_team_dictionary)
+##
+##    print('Putting all the lines in one feature class.')
+##    append_lines(output_gdb, output_line_fc)
+##
+##    print('Creating team subtype for line features.')
+##    create_team_subtype(output_gdb, output_line_fc, team_dictionary)
+##
+##    print('Running line density analysis.')
+##    create_line_density_raster(output_gdb, output_line_fc, team_dictionary)
+##
+##    print('Running line density analysis per quarter.')
+##    create_line_density_raster_per_quarter(output_gdb, output_line_fc, team_dictionary, quarter_list)
+##
+##    print('Finding mean center of action.')
+##    find_mean_center_of_movement(output_gdb, output_point_fc_sorted, team_dictionary)
+##
+##    print('Finding mean center per quarter.')
+##    find_mean_center_of_movement_per_quarter(output_gdb, output_point_fc_sorted, team_dictionary, quarter_list)
 
     t1 = (time.clock() - t0)/60
     print("This process took " + str(t1) + " minutes to run.")
