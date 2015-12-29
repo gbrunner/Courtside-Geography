@@ -12,8 +12,9 @@
 
 from __future__ import division
 
-import urllib2
-import json
+#import urllib2
+#import json
+import requests
 import os
 
 import arcpy
@@ -24,7 +25,7 @@ fc_fields = ("SHAPE@XY","GRID_TYPE","GAME_ID","GAME_EVENT_ID","PLAYER_ID","PLAYE
     "TEAM_NAME","PERIOD","MINUTES_REMAINING","SECONDS_REMAINING","EVENT_TYPE",
     "ACTION_TYPE","SHOT_TYPE","SHOT_ZONE_BASIC","SHOT_ZONE_AREA",
     "SHOT_ZONE_RANGE","SHOT_DISTANCE","LOC_X","LOC_Y","SHOT_ATTEMPTED_FLAG",
-    "SHOT_MADE_FLAG", "THREE")
+    "SHOT_MADE_FLAG", "THREE", "GAME_DATE")
 
 def get_last_game(player_id, season):
 
@@ -33,8 +34,10 @@ def get_last_game(player_id, season):
     seasontype="Regular%20Season"
     seasonindicator=0
     nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype, player_id)
-    plays=urllib2.urlopen(nba_call_url)
-    data=json.load(plays)
+    response = requests.get(nba_call_url)
+    data = response.json()
+    #plays=urllib2.urlopen(nba_call_url)
+    #data=json.load(plays)
 
     for row in data['resultSets'][0]['rowSet']:
         three=0
@@ -42,7 +45,7 @@ def get_last_game(player_id, season):
             three=1
         temp=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7],
                 row[8], row[9], row[10],row[11], row[12], row[13], row[14],
-                row[15], row[16], row[17],row[18], row[19], row[20], three)
+                row[15], row[16], row[17],row[18], row[19], row[20], three, season[:4])
         coord = ([-row[17],row[18]])
         coords.append((coord,)+temp)
 
@@ -78,6 +81,7 @@ def create_feature_class(output_gdb, output_feature_class):
         arcpy.AddField_management(output_feature_class,"SHOT_ATTEMPTED_FLAG","SHORT", "", "", "")
         arcpy.AddField_management(output_feature_class,"SHOT_MADE_FLAG","SHORT", "", "", "")
         arcpy.AddField_management(output_feature_class,"THREE","SHORT", "", "", "")
+        arcpy.AddField_management(output_feature_class,"GAME_DATE", "TEXT", "", "", 30)
 
 def populate_feature_class(rowValues, output_feature_class):
     #rowValues = [('Anderson', (1409934.4442000017, 1076766.8192000017))]
@@ -113,6 +117,14 @@ def add_player_movement(fc):
 
     print('Done')
 
+def append_seasons(gdb, output_fc):
+    arcpy.env.workspace = gdb
+    fc_list = arcpy.ListFeatureClasses('*',"Point")
+    arcpy.CreateFeatureclass_management(gdb, os.path.basename(output_fc), "POINT", fc_list[0],"DISABLED","DISABLED","PROJCS['WGS_1984_Web_Mercator_Auxiliary_Sphere',GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Mercator_Auxiliary_Sphere'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Standard_Parallel_1',0.0],PARAMETER['Auxiliary_Sphere_Type',0.0],UNIT['Meter',1.0]];-20037700 -30241100 10000;-100000 10000;-100000 10000;0.001;0.001;0.001;IsHighPrecision","#","0","0","0")
+    arcpy.Append_management(fc_list, output_fc, 'NO_TEST', '', '')
+##    for fc in fc_list:
+##        arcpy.Delete_management(fc)
+
 ##def write_to_csv(fc, csv_file):
 ##    data_set = fc
 ##    output = csv_file
@@ -125,33 +137,44 @@ def add_player_movement(fc):
 ##        out_writer.writerow(row)
 
 
-players = {'lebron james': '2544',
-    'kevin durant': '201142',
-    'anthony davis': '203076',
-    'stephen curry': '201939',
-    'james harden': '201935',
-    'chris paul': '101108',
-    'russel westbrook': '201566',
-    'blake griffin': '201933',
-    'marc gasol': '201188',
-    'kawhi leonard': '202695'}
+##players = {'lebron james': '2544',
+##    'kevin durant': '201142',
+##    'anthony davis': '203076',
+##    'stephen curry': '201939',
+##    'james harden': '201935',
+##    'chris paul': '101108',
+##    'russel westbrook': '201566',
+##    'blake griffin': '201933',
+##    'marc gasol': '201188',
+##    'kawhi leonard': '202695'}
+
+
 
 if __name__ == '__main__':
 
-    season= '2014-15'
-    for player in players:
-        player_name = player
-        print('Looking at ' + player_name)
-        player_id = players[player_name]
-        output_feature_class = os.path.join("C:/PROJECTS/R&D/NBA/Part_II.gdb", player_name.replace(' ', '_') + '_' + season.replace('-','_'))
-        output_gdb = os.path.dirname(output_feature_class)
-        print('Processing feature data')
-        feature_data, coords = get_last_game(player_id, season)
-        print('Creating output features')
-        create_feature_class(output_gdb, output_feature_class)
-        print('Populating features')
-        populate_feature_class(coords, output_feature_class)
-        print('Adding Player Movement')
-        add_player_movement(output_feature_class)
+    players = {'Kobe Bryant': '977' }
+    seasons = ['2001-02', '2002-03', '2003-04', '2004-05', '2005-06', '2006-07', '2007-08',
+            '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15']
+    gdb = "C:/PROJECTS/R&D/NBA/Mamba.gdb"
+
+##    #season= '2014-15'
+##    for player in players:
+##        for season in seasons:
+##            print('Looking at ' + str(season) + ' season')
+##            player_name = player
+##            print('Looking at ' + player_name)
+##            player_id = players[player_name]
+##            output_feature_class = os.path.join(gdb, player_name.replace(' ', '_') + '_' + season.replace('-','_'))
+##            output_gdb = os.path.dirname(output_feature_class)
+##            print('Processing feature data')
+##            feature_data, coords = get_last_game(player_id, season)
+##            print('Creating output features')
+##            create_feature_class(output_gdb, output_feature_class)
+##            print('Populating features')
+##            populate_feature_class(coords, output_feature_class)
+##            print('Adding Player Movement')
+##            add_player_movement(output_feature_class)
+    print('Appending all data to one feature class.')
+    append_seasons(gdb, 'all_shots')
 
     print('Done.')
