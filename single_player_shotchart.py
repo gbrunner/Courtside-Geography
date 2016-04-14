@@ -34,9 +34,13 @@ def get_last_game(player_id, season):
     seasontype="Regular%20Season"
     seasonindicator=0
     nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype, player_id)
-    response = requests.get(nba_call_url)
+    print(nba_call_url)
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'}
+    response = requests.get(nba_call_url, headers=headers)
+    #print(response)
     data = response.json()
-    #plays=urllib2.urlopen(nba_call_url)
+    #req = urllib2.Request(nba_call_url)
+    #plays=urllib2.urlopen(req) #nba_call_url)
     #data=json.load(plays)
 
     for row in data['resultSets'][0]['rowSet']:
@@ -154,8 +158,8 @@ if __name__ == '__main__':
 
     players = {'Kobe Bryant': '977' }
     seasons = ['2001-02', '2002-03', '2003-04', '2004-05', '2005-06', '2006-07', '2007-08',
-            '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15']
-    gdb = "C:/PROJECTS/R&D/NBA/Mamba.gdb"
+            '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
+    gdb = "C:/PROJECTS/R&D/NBA/Kobes_Career.gdb"
 
     #season= '2014-15'
     for player in players:
