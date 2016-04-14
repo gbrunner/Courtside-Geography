@@ -157,24 +157,26 @@ if __name__ == '__main__':
             '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15']
     gdb = "C:/PROJECTS/R&D/NBA/Mamba.gdb"
 
-##    #season= '2014-15'
-##    for player in players:
-##        for season in seasons:
-##            print('Looking at ' + str(season) + ' season')
-##            player_name = player
-##            print('Looking at ' + player_name)
-##            player_id = players[player_name]
-##            output_feature_class = os.path.join(gdb, player_name.replace(' ', '_') + '_' + season.replace('-','_'))
-##            output_gdb = os.path.dirname(output_feature_class)
-##            print('Processing feature data')
-##            feature_data, coords = get_last_game(player_id, season)
-##            print('Creating output features')
-##            create_feature_class(output_gdb, output_feature_class)
-##            print('Populating features')
-##            populate_feature_class(coords, output_feature_class)
-##            print('Adding Player Movement')
-##            add_player_movement(output_feature_class)
-    print('Appending all data to one feature class.')
-    append_seasons(gdb, 'all_shots')
+    #season= '2014-15'
+    for player in players:
+        for season in seasons:
+            print('Looking at ' + str(season) + ' season')
+            player_name = player
+            print('Looking at ' + player_name)
+            player_id = players[player_name]
+            output_feature_class = os.path.join(gdb, player_name.replace(' ', '_') + '_' + season.replace('-','_'))
+            output_gdb = os.path.dirname(output_feature_class)
+            print('Processing feature data')
+            feature_data, coords = get_last_game(player_id, season)
+            print('Creating output features')
+            create_feature_class(output_gdb, output_feature_class)
+            print('Populating features')
+            populate_feature_class(coords, output_feature_class)
+            print('Adding Player Movement')
+            add_player_movement(output_feature_class)
+
+    if len(seasons) > 1:
+        print('Appending all data to one feature class.')
+        append_seasons(gdb, 'all_shots')
 
     print('Done.')
