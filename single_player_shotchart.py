@@ -16,6 +16,7 @@ from __future__ import division
 #import json
 import requests
 import os
+import datetime
 
 import arcpy
 
@@ -49,7 +50,7 @@ def get_last_game(player_id, season):
             three=1
         temp=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7],
                 row[8], row[9], row[10],row[11], row[12], row[13], row[14],
-                row[15], row[16], row[17],row[18], row[19], row[20], three, season[:4])
+                row[15], row[16], row[17],row[18], row[19], row[20], three, season[:4], datetime.datetime(int(season[:4])+1, 1, 1))
         coord = ([-row[17],row[18]])
         coords.append((coord,)+temp)
 
@@ -86,6 +87,7 @@ def create_feature_class(output_gdb, output_feature_class):
         arcpy.AddField_management(output_feature_class,"SHOT_MADE_FLAG","SHORT", "", "", "")
         arcpy.AddField_management(output_feature_class,"THREE","SHORT", "", "", "")
         arcpy.AddField_management(output_feature_class,"GAME_DATE", "TEXT", "", "", 30)
+        arcpy.AddField_management(output_feature_class,"SEASON_DATE", "DATE")
 
 def populate_feature_class(rowValues, output_feature_class):
     #rowValues = [('Anderson', (1409934.4442000017, 1076766.8192000017))]
@@ -156,10 +158,14 @@ def append_seasons(gdb, output_fc):
 
 if __name__ == '__main__':
 
-    players = {'Kobe Bryant': '977' }
-    seasons = ['2001-02', '2002-03', '2003-04', '2004-05', '2005-06', '2006-07', '2007-08',
-            '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
-    gdb = "C:/PROJECTS/R&D/NBA/Kobes_Career.gdb"
+##    players = {'Kobe Bryant': '977' }
+##    seasons = ['2001-02', '2002-03', '2003-04', '2004-05', '2005-06', '2006-07', '2007-08',
+##            '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
+##    gdb = "C:/PROJECTS/R&D/NBA/Kobe_Bryants_Career.gdb"
+
+    players = {'Kevin Durant': '201142'}
+    seasons = ['2007-08', '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
+    gdb = "C:/PROJECTS/R&D/NBA/Kevin_Durant_Career.gdb"
 
     #season= '2014-15'
     for player in players:
