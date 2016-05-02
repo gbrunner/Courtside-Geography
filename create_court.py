@@ -103,6 +103,54 @@ def build_court_markers(output_gdb, output_feature_class):
 
     cursor = arcpy.da.InsertCursor(fc, fields)
 
+    wing_hash_1 = [(-250, 280-52.5),
+             (-250+30, 280-52.5)]
+    cursor.insertRow([wing_hash_1, "Hash Mark"])
+
+    wing_hash_2 = [(250, 280-52.5),
+             (250-30, 280-52.5)]
+    cursor.insertRow([wing_hash_2, "Hash Mark"])
+
+    wing_hash_3 = [(-250, 280+380-52.5),
+             (-250+30, 280+380-52.5)]
+    cursor.insertRow([wing_hash_3, "Hash Mark"])
+
+    wing_hash_4 = [(250, 280+380-52.5),
+             (250-30, 280+380-52.5)]
+    cursor.insertRow([wing_hash_4, "Hash Mark"])
+
+    circle_1 = [(40, -12,5),
+             (40, 0)]
+    cursor.insertRow([circle_1, "Circle"])
+
+    circle_2 = [(-40, -12,5),
+             (-40, 0)]
+    cursor.insertRow([circle_2, "Circle"])
+
+    circle_3 = [(40, 835+12,5),
+             (40, 835)]
+    cursor.insertRow([circle_3, "Circle"])
+
+    circle_4 = [(-40, 835+12,5),
+             (-40, 835)]
+    cursor.insertRow([circle_4, "Circle"])
+
+    baseline_hash_1 = [(110, -52.5),
+             (110, -52.5+5)]
+    cursor.insertRow([baseline_hash_1, "Baseline Hash Mark"])
+
+    baseline_hash_2 = [(-110, -52.5),
+             (-110, -52.5+5)]
+    cursor.insertRow([baseline_hash_2, "Baseline Hash Mark"])
+
+    baseline_hash_3 = [(-110, 940-52.5),
+             (-110, 940-52.5-5)]
+    cursor.insertRow([baseline_hash_3, "Baseline Hash Mark"])
+
+    baseline_hash_4 = [(110, 940-52.5),
+             (110, 940-52.5-5)]
+    cursor.insertRow([baseline_hash_4, "Baseline Hash Mark"])
+
     back_board = [(-30, -12.5),
              (30, -12.5)]
     cursor.insertRow([back_board, "Backboard"])
@@ -130,6 +178,38 @@ def build_court_markers(output_gdb, output_feature_class):
     three = [(220-(1/12)*10, 940-52.5),
              (220-(1/12)*10, 940-(140+52.5))]
     cursor.insertRow([three, "Three Point Line"])
+
+    #4-Feet by basket
+    pt_geometry = arcpy.PointGeometry(arcpy.Point(0,0))
+    arcpy.Buffer_analysis(pt_geometry, "in_memory\\lane_arc1", 40) #237.5)#
+
+    pt_geometry = arcpy.PointGeometry(arcpy.Point(0,835))
+    arcpy.Buffer_analysis(pt_geometry, "in_memory\\lane_arc2", 40) #237.5)#
+
+    arcpy.CreateFeatureclass_management(
+            "in_memory", "lane_arc_clipper", "POLYGON", "#", "DISABLED",
+            "DISABLED", arcpy.SpatialReference(3857))
+    arcpy.AddField_management("in_memory\\lane_arc_clipper", fields[1], "TEXT",
+                                  field_length=20)
+    lane_clip_cursor = arcpy.da.InsertCursor("in_memory\\lane_arc_clipper", fields)
+    clip_poly = [(-250, 0),
+             (250, 0),
+             (250, 50),
+             (-250, 50)]
+    lane_clip_cursor.insertRow([clip_poly, "Lane"])
+    clip_poly = [(-250, 835),
+             (250, 835),
+             (250, 740),
+             (-250, 740)]
+    lane_clip_cursor.insertRow([clip_poly, "Lane"])
+
+    arcpy.PolygonToLine_management("in_memory\\lane_arc1","in_memory\\lane_arc_line_1")
+    arcpy.PolygonToLine_management("in_memory\\lane_arc2","in_memory\\lane_arc_line_2")
+
+    arcpy.Clip_analysis("in_memory\\lane_arc_line_1", "in_memory\\lane_arc_clipper", "in_memory\\clip_lane_arc1")
+    arcpy.Clip_analysis("in_memory\\lane_arc_line_2", "in_memory\\lane_arc_clipper", "in_memory\\clip_lane_arc2")
+    arcpy.Append_management("in_memory\\clip_lane_arc1", fc, "NO_TEST","","")
+    arcpy.Append_management("in_memory\\clip_lane_arc2", fc, "NO_TEST","","")
 
     #Create 3Point Arc
     pt_geometry = arcpy.PointGeometry(arcpy.Point(0,0))
@@ -170,5 +250,5 @@ def build_court_markers(output_gdb, output_feature_class):
 if __name__ == '__main__':
     out_gdb = r"C:\PROJECTS\R&D\NBA\court.gdb"
     out_fc = "court_poly"
-    #build_basketball_court(out_gdb, out_fc)
+    build_basketball_court(out_gdb, out_fc)
     build_court_markers(out_gdb, "court_markers")
