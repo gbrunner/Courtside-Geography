@@ -163,20 +163,20 @@ def build_court_markers(output_gdb, output_feature_class):
              (250, 470-52.5)]
     cursor.insertRow([half_court, "Half Court"])
 
-    three = [(-220+(1/12)*10, -52.5),
-             (-220+(1/12)*10, 140-52.5)]
+    three = [(-219, -52.5),
+             (-219, 140-52.5)]
     cursor.insertRow([three, "Three Point Line"])
 
-    three = [(220-(1/12)*10, -52.5),
-             (220-(1/12)*10, 140-52.5)]
+    three = [(219, -52.5),
+             (219, 140-52.5)]
     cursor.insertRow([three, "Three Point Line"])
 
-    three = [(-220+(1/12)*10, 940-52.5),
-             (-220+(1/12)*10, 940-(140+52.5))]
+    three = [(-219, 940-52.5),
+             (-219, 940-(140+52.5))]
     cursor.insertRow([three, "Three Point Line"])
 
-    three = [(220-(1/12)*10, 940-52.5),
-             (220-(1/12)*10, 940-(140+52.5))]
+    three = [(219, 940-52.5),
+             (219, 940-(140+52.5))]
     cursor.insertRow([three, "Three Point Line"])
 
     #4-Feet by basket
