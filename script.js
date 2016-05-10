@@ -94,7 +94,7 @@ require([
         y: 0
       },
       heading: 0,
-      tilt: 0
+      tilt: 45
     },
     environment: {
       atmosphere: null,
