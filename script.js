@@ -34,27 +34,42 @@ require([
         value: 1,
         size: 10,
       }, {
-        value: 20,
-        size: 100,
+        value: 2,
+        size: 20,
       }, {
-        value: 80,
-        size: 100,
+        value: 4,
+        size: 40,
       }, {
-        value: 140,
-        size: 100,
+        value: 8,
+        size: 80,
       }, {
-        value: 240,
-        size: 100,
+        value: 14,
+        size: 140,
+      }, {
+        value: 24,
+        size: 240,
       }]
     }, {
       type: 'color',
       field: 'Point_Count',
       stops: [{
         value: 1,
-        color: '#FFFCD4',
+        color: [212,227,245,255],
       }, {
-        value: 10,
-        color: [153, 83, 41],
+        value: 2,
+        color: [133,154,250,255],
+      } , {
+        value: 4,
+        color: [62,90,253,255],
+      }, {
+        value: 8,
+        color: [10,42,244,255],
+      }, {
+        value: 14,
+        color: [132,149,122,255],
+      }, {
+        value: 24,
+        color: [255,255,0,255],
       }]
     }]
   });
