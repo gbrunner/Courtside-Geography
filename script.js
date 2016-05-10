@@ -30,23 +30,23 @@ require([
     visualVariables: [{
       type: 'size',
       field: 'Point_Count',
-      stops: [/*{
-        value: 0.10,
-        size: 10000,
+      stops: [{
+        value: 1,
+        size: 10,
       }, {
-        value: 0.50,
-        size: 500000,
-      }*/]
+        value: 10,
+        size: 100,
+      }]
     }, {
       type: 'color',
       field: 'Point_Count',
-      /*stops: [{
-        value: 0.10,
+      stops: [{
+        value: 1,
         color: '#FFFCD4',
       }, {
-        value: 0.35,
+        value: 10,
         color: [153, 83, 41],
-      }]*/
+      }]
     }]
   });
 
