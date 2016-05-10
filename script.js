@@ -66,8 +66,8 @@ require([
     viewingMode: 'local',
     camera: {
       position: {
-        x: -718.8748475522278,
-        y: 1451.1963256864549
+        x: 0,
+        y: 0
       },
       heading: 0,
       tilt: 0
