@@ -11,7 +11,7 @@ require([
 
   'dojo/domReady!'
 ], function(
-  FeatureLayer, TileLayer, Map, SimpleRenderer, ClassBreaksRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, SceneView, Home
+  FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, SceneView, Home
 ) {
 
   var basketballCourtMapServiceUrl =
