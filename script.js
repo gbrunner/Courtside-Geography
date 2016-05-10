@@ -69,7 +69,7 @@ require([
         x: 0,
         y: 0
       },
-      heading: 0,
+      heading: 90,
       tilt: 0
     },
     environment: {
