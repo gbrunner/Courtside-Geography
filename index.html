@@ -1,121 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title></title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Courtside Geography</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 
-    <link rel="stylesheet" href="//js.arcgis.com/3.15/dijit/themes/tundra/tundra.css">
-    <link rel="stylesheet" href="//js.arcgis.com/3.15/esri/css/esri.css">
+  <link rel="stylesheet" href="//js.arcgis.com/4.0/esri/css/main.css">
+</head>
 
-    <style>
-      html, body, #map {
-        height: 100%; width: 100%; margin: 0; padding: 0; 
-      }
-      #loading {
-        width:100%; 
-        position:absolute;
-        height:400px;
-        background:transparent url("https://dl.dropboxusercontent.com/u/2654618/ajax-gear.gif") center no-repeat;
-        z-index:100;
-      }
-      #histogram-container text, #histogram-range,
-      #scale-bar-left text, #scale-bar-right text {
-        font-family: sans-serif;
-      }
-      #histogram-timeslider-dijit #focusTip {
-        font-family: sans-serif;
-      }
-    </style>
+<body>
+  <div id="viewDiv"></div>
+  
+  <script src="//js.arcgis.com/4.0/"></script>
 
-    <script src="//js.arcgis.com/3.15/"></script>
-    <script>
-      var map;
-    
-      require([
-        "esri/map", "esri/InfoTemplate", 
-        "esri/layers/FeatureLayer", "esri/dijit/HistogramTimeSlider", 
-        "dojo/parser","esri/layers/ArcGISTiledMapServiceLayer", "dojo/dom-construct", 
-        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
-        "dojo/domReady!"
-      ], function(
-        Map, InfoTemplate, 
-        FeatureLayer, HistogramTimeSlider, 
-        parser, Tiled, domConstruct
-      ) {
-          parser.parse();
-
-          map = new Map("mapDiv", {
-            center: [0, 0.004],
-            zoom: 17
-          });
-          var tiled = new Tiled("http://tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/OKC_Court/MapServer");
-          map.addLayer(tiled);
-
-          // feature service with U2 concerts from 1980 - 2011
-          var featuresUrl = "http://services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Part_II_Game_Movement_10_events_aligned/FeatureServer/0";
-          var layer = new FeatureLayer(featuresUrl, {
-            id: "u2",
-            infoTemplate: new InfoTemplate(
-              "NBA Player Movement", 
-              "Player Name:  ${PLAYER_ID}<br>" +
-              "Team:  ${TEAM_ID}<br>" + 
-              "Time:  ${TIME}"
-            ),
-            // infoTemplate: new InfoTemplate("title", "description"),
-            mode: FeatureLayer.MODE_SNAPSHOT, // SNAPSHOT required for the histogram time slider
-            outFields: ["*"]
-          });
-
-          var layerUpdateEnd = layer.on("update-end", function() {
-            layerUpdateEnd.remove();
-
-            var sliderElem = domConstruct.create("div", {
-              id: "timeSlider_"+ map.id, 
-              style: "margin-bottom:10px; bottom:33px"
-            }, "bottom-div");
-            var sliderParams = {
-              // format the dates as mm/dd/yyyy
-              // more formatting options:  https://developers.arcgis.com/javascript/jshelp/intro_formatinfowindow.html
-              dateFormat: "DateFormat(selector: 'date', fullYear:false)",
-              layers : [ layer ],
-              mode: "show_all",
-              timeInterval: "esriTimeUnitsSeconds"
-            };
-            var slider = new HistogramTimeSlider(sliderParams, sliderElem);
-            map.setTimeSlider(slider);
-            domConstruct.destroy("loading");
-          });
-          
-          map.addLayer(layer);
-        }
-      );
-    </script>
-  </head>
-  <body class="tundra">
-    <div class="demoLayout" style="height: 100%; width: 100%" 
-         data-dojo-type="dijit/layout/BorderContainer" 
-         data-dojo-props="design: 'headline'">
-
-        <div class="centerPanel" 
-             data-dojo-type="dijit/layout/ContentPane" 
-             data-dojo-props="region: 'center'">
-
-          <div id="mapDiv" 
-            data-dojo-type="dijit/layout/ContentPane" 
-            data-dojo-props="region:'center'"> 
-           
-            <div id="loading"></div>
-
-          </div>
-
-        </div>
-        
-        <div class="edgePanel" id="bottom-div" style="height:145px; overflow:hidden" 
-             data-dojo-type="dijit/layout/ContentPane" 
-             data-dojo-props="region: 'bottom'">
-        </div>
-
-    </div>
-  </body>
+  <script src="script.js"></script>
+</body>
 </html>
