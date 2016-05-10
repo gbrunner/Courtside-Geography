@@ -69,8 +69,8 @@ require([
         x: -718.8748475522278,
         y: 1451.1963256864549
       },
-      heading: 145,
-      tilt: 60
+      heading: 0,
+      tilt: 0
     },
     environment: {
       atmosphere: null,
