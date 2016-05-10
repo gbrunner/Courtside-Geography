@@ -34,7 +34,16 @@ require([
         value: 1,
         size: 10,
       }, {
-        value: 10,
+        value: 20,
+        size: 100,
+      }, {
+        value: 80,
+        size: 100,
+      }, {
+        value: 140,
+        size: 100,
+      }, {
+        value: 240,
         size: 100,
       }]
     }, {
