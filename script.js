@@ -92,7 +92,7 @@ require([
       position: {
         x: 0,
         y: 0,
-        z: 1000
+        z: 750
       },
       heading: -90,
       tilt: 45
