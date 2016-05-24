@@ -25,10 +25,10 @@ require([
   var basketballCourtMapServiceUrl =
     '//tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/Dark_Basketball_Court/MapServer';
   var hexbinsFeatureServiceUrl =
-    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_Playoffs_Made_missed/FeatureServer/0';
+    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_Playoffs_Made_missed/FeatureServer/1';
     //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
   var missesFeatureServiceUrl =
-    'http://services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_Playoffs_Made_missed/FeatureServer/1';
+    'http://services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_Playoffs_Made_missed/FeatureServer/0';
     //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
 
   var tileLayer = new TileLayer({
@@ -139,12 +139,20 @@ var missesRenderer = new SimpleRenderer({
 
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
-    renderer: renderer
+    renderer: renderer,
+    elevationInfo: {
+          mode: "relative-to-ground",
+          offset: 0.5
+    }
   });
 
   var missesFeatureLayer = new FeatureLayer({
     url: missesFeatureServiceUrl,
-    renderer: missesRenderer
+    renderer: missesRenderer,
+    elevationInfo: {
+          mode: "relative-to-ground",
+          offset: -0.5
+    }
   });
 
   var map = new Map({
