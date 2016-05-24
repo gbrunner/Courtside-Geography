@@ -177,9 +177,9 @@ var missesRenderer = new SimpleRenderer({
     }
   });
 
-//
+//-------------
   var graphicsLayer = new GraphicsLayer();
-  map.add(graphicsLayer);
+
 
         /*************************
          * Add a 3D point graphic
@@ -207,6 +207,7 @@ var missesRenderer = new SimpleRenderer({
   });
 
   graphicsLayer.add(pointGraphic);
+  map.add(graphicsLayer);
 //-----
 
   view.then(function() {
