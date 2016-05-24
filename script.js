@@ -140,6 +140,7 @@ var missesRenderer = new SimpleRenderer({
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
     renderer: renderer,
+    mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
           mode: "relative-to-ground",
           offset: 10
@@ -149,6 +150,7 @@ var missesRenderer = new SimpleRenderer({
   var missesFeatureLayer = new FeatureLayer({
     url: missesFeatureServiceUrl,
     renderer: missesRenderer,
+    mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
           mode: "relative-to-ground",
           offset: -10
