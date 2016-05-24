@@ -26,15 +26,19 @@ fc_fields = ("SHAPE@XY","GRID_TYPE","GAME_ID","GAME_EVENT_ID","PLAYER_ID","PLAYE
     "TEAM_NAME","PERIOD","MINUTES_REMAINING","SECONDS_REMAINING","EVENT_TYPE",
     "ACTION_TYPE","SHOT_TYPE","SHOT_ZONE_BASIC","SHOT_ZONE_AREA",
     "SHOT_ZONE_RANGE","SHOT_DISTANCE","LOC_X","LOC_Y","SHOT_ATTEMPTED_FLAG",
-    "SHOT_MADE_FLAG", "THREE", "GAME_DATE")
+    "SHOT_MADE_FLAG", "THREE", "GAME_DATE", "SEASON_DATE")
 
-def get_last_game(player_id, season):
+def get_last_game(player_id, season, playoffs, away):
 
     master_shots=[]
     coords = []
-    seasontype="Regular%20Season"
+    if playoffs:
+        seasontype="Playoffs"
+    else:
+        seasontype="Regular%20Season"
     seasonindicator=0
     nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype, player_id)
+    #nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype)
     print(nba_call_url)
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'}
     response = requests.get(nba_call_url, headers=headers)
@@ -51,7 +55,10 @@ def get_last_game(player_id, season):
         temp=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7],
                 row[8], row[9], row[10],row[11], row[12], row[13], row[14],
                 row[15], row[16], row[17],row[18], row[19], row[20], three, season[:4], datetime.datetime(int(season[:4])+1, 1, 1))
-        coord = ([-row[17],row[18]])
+        if away:
+            coord = ([row[17],((470-52.5)-row[18])+(470-52.5)])
+        else:
+            coord = ([-row[17],row[18]])
         coords.append((coord,)+temp)
 
     return master_shots, coords
@@ -93,7 +100,7 @@ def populate_feature_class(rowValues, output_feature_class):
     #rowValues = [('Anderson', (1409934.4442000017, 1076766.8192000017))]
     c = arcpy.da.InsertCursor(output_feature_class,fc_fields)
     for row in rowValues:
-        #print(row)
+        print(row)
         c.insertRow(row)
     del c
 
@@ -131,6 +138,24 @@ def append_seasons(gdb, output_fc):
 ##    for fc in fc_list:
 ##        arcpy.Delete_management(fc)
 
+def create_hex_layers(hexagon_features, shots, output_gdb):
+    print('Shots Made Hexagons')
+    made_shots_layer = 'in_memory\\made_shots_layer'
+    query = '"SHOT_MADE_FLAG" = 1'
+    arcpy.MakeFeatureLayer_management(shots,made_shots_layer,query,"#","#")
+    arcpy.analysis.SummarizeWithin(hexagon_features, made_shots_layer, os.path.join(output_gdb, "shots_made_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+
+    print('Shots Missed Hexagons')
+    missed_shots_layer = 'in_memory\\missed_shots_layer'
+    query = '"SHOT_MADE_FLAG" = 0'
+    arcpy.MakeFeatureLayer_management(shots,missed_shots_layer,query,"#","#")
+    arcpy.analysis.SummarizeWithin(hexagon_features, missed_shots_layer, os.path.join(output_gdb, "shots_missed_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+
+    print('Total Shots Hexagons')
+    arcpy.analysis.SummarizeWithin(hexagon_features, shots, os.path.join(output_gdb, "total_shots_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+
+
+
 ##def write_to_csv(fc, csv_file):
 ##    data_set = fc
 ##    output = csv_file
@@ -163,9 +188,22 @@ if __name__ == '__main__':
 ##            '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
 ##    gdb = "C:/PROJECTS/R&D/NBA/Kobe_Bryants_Career.gdb"
 
-    players = {'Kevin Durant': '201142'}
-    seasons = ['2007-08', '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
-    gdb = "C:/PROJECTS/R&D/NBA/Kevin_Durant_Career.gdb"
+    #players = {'Kevin Durant': '201142'}
+    #seasons = ['2007-08', '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
+    #gdb = "C:/PROJECTS/R&D/NBA/Kevin_Durant_Career.gdb"
+    #players = {'Stephen Curry': '201939'}
+    #seasons = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
+    #gdb = "C:/PROJECTS/R&D/NBA/Steph_Curry.gdb"
+    players = {'Stephen Curry': '201939'}#,
+    #players = {'Kevin Durant': '201142'}
+    #players = {'Kevin Durant': '201142','Russell Westbrook': '201566'}#,
+    #            'Lebron James': '2544'}
+    seasons = ['2015-16']
+    playoffs = True
+    away = False #True
+    hexbins = "C:\\PROJECTS\\R&D\\NBA\\Part_II.gdb\\Court_Hexibins"
+
+    gdb = "C:/PROJECTS/R&D/NBA/SC_Playoffs_2015_16.gdb"
 
     #season= '2014-15'
     for player in players:
@@ -177,13 +215,15 @@ if __name__ == '__main__':
             output_feature_class = os.path.join(gdb, player_name.replace(' ', '_') + '_' + season.replace('-','_'))
             output_gdb = os.path.dirname(output_feature_class)
             print('Processing feature data')
-            feature_data, coords = get_last_game(player_id, season)
+            feature_data, coords = get_last_game(player_id, season, playoffs, away)
             print('Creating output features')
             create_feature_class(output_gdb, output_feature_class)
             print('Populating features')
             populate_feature_class(coords, output_feature_class)
             print('Adding Player Movement')
             add_player_movement(output_feature_class)
+            print('Creating Hexbin Shotchart')
+            create_hex_layers(hexbins, output_feature_class, output_gdb)
 
     if len(seasons) > 1:
         print('Appending all data to one feature class.')
