@@ -9,11 +9,15 @@ require([
   'esri/views/SceneView',
   'esri/layers/GraphicsLayer',
   'esri/symbols/SimpleMarkerSymbol',
+  
+  "esri/Graphic",
+  "esri/geometry/Point",
+  
   'esri/widgets/Home',
 
   'dojo/domReady!'
 ], function(
-  FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, SceneView, GraphicsLayer, SimpleMarkerSymbol, Home
+  FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, SceneView, GraphicsLayer, SimpleMarkerSymbol, Graphic, Point, Home
 ) {
 
   /*var basketballCourtMapServiceUrl =
