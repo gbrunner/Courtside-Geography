@@ -90,6 +90,14 @@ require([
     container: 'viewDiv',
     map: map,
     viewingMode: 'local',
+    constraints: {
+      collision: {
+        enabled: false
+      },
+      tilt: {
+        max: 179.99
+      }
+    },
     camera: {
       position: {
         x: 0,
