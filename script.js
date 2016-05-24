@@ -171,6 +171,38 @@ var missesRenderer = new SimpleRenderer({
     }
   });
 
+//
+  var graphicsLayer = new GraphicsLayer();
+  map.add(graphicsLayer);
+
+        /*************************
+         * Add a 3D point graphic
+         *************************/
+
+  // London
+  var point = new Point({
+    x: 0,
+    y: 47,
+    z: 100
+  }),
+
+  markerSymbol = new SimpleMarkerSymbol({
+    color: [226, 119, 40],
+
+    outline: { // autocasts as new SimpleLineSymbol()
+      color: [255, 255, 255],
+      width: 2
+    }
+  });
+
+  var pointGraphic = new Graphic({
+    geometry: point,
+    symbol: markerSymbol
+  });
+
+  graphicsLayer.add(pointGraphic);
+//-----
+
   view.then(function() {
     // Use the exent defined in clippingArea to define the bounds of the scene
     view.clippingArea = tileLayer.fullExtent;
