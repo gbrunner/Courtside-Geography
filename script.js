@@ -25,10 +25,10 @@ require([
   var basketballCourtMapServiceUrl =
     '//tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/Dark_Basketball_Court/MapServer';
   var hexbinsFeatureServiceUrl =
-    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_Playoffs_Made_missed/FeatureServer/1';
+    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_RegSeason_2015_16/FeatureServer/1';
     //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
   var missesFeatureServiceUrl =
-    'http://services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_Playoffs_Made_missed/FeatureServer/0';
+    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_RegSeason_2015_16/FeatureServer/0';
     //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
 
   var tileLayer = new TileLayer({
