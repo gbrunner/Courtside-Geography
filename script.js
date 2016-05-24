@@ -189,7 +189,7 @@ var missesRenderer = new SimpleRenderer({
   var point = new Point({
     x: 0,
     y: 47,
-    z: 100
+    z: 10
   }),
 
   markerSymbol = new SimpleMarkerSymbol({
@@ -197,7 +197,7 @@ var missesRenderer = new SimpleRenderer({
 
     outline: { // autocasts as new SimpleLineSymbol()
       color: [255, 255, 255],
-      width: 2
+      width: 10
     }
   });
 
