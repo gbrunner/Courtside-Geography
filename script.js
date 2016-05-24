@@ -142,7 +142,7 @@ var missesRenderer = new SimpleRenderer({
     renderer: renderer,
     elevationInfo: {
           mode: "relative-to-ground",
-          offset: 0.5
+          offset: 10
     }
   });
 
@@ -151,7 +151,7 @@ var missesRenderer = new SimpleRenderer({
     renderer: missesRenderer,
     elevationInfo: {
           mode: "relative-to-ground",
-          offset: -0.5
+          offset: -10
     }
   });
 
