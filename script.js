@@ -20,6 +20,8 @@ require([
     '//tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/Dark_Basketball_Court/MapServer';
   var hexbinsFeatureServiceUrl =
     '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
+  var missesFeatureServiceUrl =
+    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
 
   var tileLayer = new TileLayer({
     url: basketballCourtMapServiceUrl
@@ -76,14 +78,70 @@ require([
     }]
   });
 
+var missesRenderer = new SimpleRenderer({
+    symbol: new PolygonSymbol3D({
+      symbolLayers: [new ExtrudeSymbol3DLayer()]
+    }),
+    visualVariables: [{
+      type: 'size',
+      field: 'Point_Count',
+      stops: [{
+        value: 1,
+        size: -10,
+      }, {
+        value: 2,
+        size: -20,
+      }, {
+        value: 4,
+        size: -40,
+      }, {
+        value: 8,
+        size: -80,
+      }, {
+        value: 14,
+        size: -140,
+      }, {
+        value: 24,
+        size: -240,
+      }]
+    }, {
+      type: 'color',
+      field: 'Point_Count',
+      stops: [{
+        value: 1,
+        color: [212,227,245,255],
+      }, {
+        value: 2,
+        color: [133,154,250,255],
+      } , {
+        value: 4,
+        color: [62,90,253,255],
+      }, {
+        value: 8,
+        color: [10,42,244,255],
+      }, {
+        value: 14,
+        color: [132,149,122,255],
+      }, {
+        value: 24,
+        color: [255,255,0,255],
+      }]
+    }]
+  });
+
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
     renderer: renderer
   });
 
+  var missesFeatureLayer = new FeatureLayer({
+    url: missesFeatureServiceUrl,
+    renderer: missesRenderer
+  });
+
   var map = new Map({
     // basemap: 'topo',
-    layers: [tileLayer, featureLayer]
+    layers: [tileLayer, featureLayer, missesFeatureLayer]
   });
 
   view = new SceneView({
