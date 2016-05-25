@@ -242,11 +242,11 @@ require([
       // reuse the default camera position already established in the homeBtn
       view.goTo({
         position: {
-          x: 47,
-          y: 0,
+          x: 0.0037504663085195862,
+          y: 0.01260657228669327,
           z: 1200
         },
-        tilt: 1,
+        tilt: 0,
         heading: 270
       });
     });
@@ -266,11 +266,11 @@ require([
     missesCameraBtn.addEventListener('click', function() {
       view.goTo({
         position: {
-          x: 0,
-          y: 0,
+          x: 0.0037504663085195862,
+          y: 0.01260657228669327,
           z: 1000
         },
-        tilt: 179,
+        tilt: 180,
         heading: 270
       });
     });
