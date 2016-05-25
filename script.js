@@ -242,9 +242,9 @@ require([
       // reuse the default camera position already established in the homeBtn
       view.goTo({
         position: {
-          x: 0,
+          x: 47,
           y: 0,
-          z: 1000
+          z: 1200
         },
         tilt: 1,
         heading: 270
