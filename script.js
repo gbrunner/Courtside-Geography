@@ -144,7 +144,7 @@ var missesRenderer = new SimpleRenderer({
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
           mode: "relative-to-ground",
-          offset: 5.0
+          offset: 1.0
     }
   });
 
@@ -154,7 +154,7 @@ var missesRenderer = new SimpleRenderer({
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
           mode: "relative-to-ground", //"on-the-ground"
-          offset: -5.0
+          offset: -1.0
     }
   });
 
