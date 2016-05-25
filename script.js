@@ -255,7 +255,7 @@ require([
       view.goTo({
         position: {
           x: 0,
-          y: 0,
+          y: 1,
           z: 0
         },
         tilt: 90,
@@ -270,7 +270,7 @@ require([
           y: 0,
           z: -1200
         },
-        tilt: -90,
+        tilt: 0,
         heading: 270
       });
     });
