@@ -32,10 +32,10 @@ require([
     //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
 
   var tileLayer = new TileLayer({
-    url: basketballCourtMapServiceUrl,
-    opacity = 0.5
+    url: basketballCourtMapServiceUrl
   });
 
+  
   var renderer = new SimpleRenderer({
     symbol: new PolygonSymbol3D({
       symbolLayers: [new ExtrudeSymbol3DLayer()]
@@ -159,6 +159,7 @@ var missesRenderer = new SimpleRenderer({
   });
 
   var map = new Map({
+    tileLayer.opacity = 0.5;
     // basemap: 'topo',
     layers: [tileLayer, featureLayer, missesFeatureLayer]
   });
