@@ -254,8 +254,8 @@ require([
     compareCameraBtn.addEventListener('click', function() {
       view.goTo({
         position: {
-          latitude: 0.0037504663085195862,
-          longitude: 0.01260657228669327,
+          x: 0,
+          y: 0,
           z: 0
         },
         tilt: 90,
@@ -268,9 +268,9 @@ require([
         position: {
           x: 0,
           y: 0,
-          z: -1200
+          z: 100
         },
-        tilt: 0,
+        tilt: 90,
         heading: 270
       });
     });
