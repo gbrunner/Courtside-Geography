@@ -240,7 +240,15 @@ require([
 
     hitsCameraBtn.addEventListener('click', function() {
       // reuse the default camera position already established in the homeBtn
-      homeBtn.go();
+      view.goTo({
+        position: {
+          latitude: 0.0037504663085195862,
+          longitude: 0.008914185697493419,
+          z: -992.3279746470496
+        },
+        tilt: 0,
+        heading: 270
+      });
     });
 
     compareCameraBtn.addEventListener('click', function() {
@@ -262,7 +270,7 @@ require([
           longitude: 0.008914185697493419,
           z: -992.3279746470496
         },
-        tilt: 135,
+        tilt: 180,
         heading: 270
       });
     });
