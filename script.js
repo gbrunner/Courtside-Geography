@@ -271,7 +271,7 @@ require([
           z: -1200
         },
         tilt: 0,
-        heading: 270
+        heading: 90
       });
     });
 
