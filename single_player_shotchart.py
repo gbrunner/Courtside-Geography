@@ -194,16 +194,16 @@ if __name__ == '__main__':
     #players = {'Stephen Curry': '201939'}
     #seasons = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
     #gdb = "C:/PROJECTS/R&D/NBA/Steph_Curry.gdb"
-    players = {'Stephen Curry': '201939'}#,
-    #players = {'Kevin Durant': '201142'}
+    #players = {'Stephen Curry': '201939'}#,
+    players = {'Kevin Durant': '201142'}
     #players = {'Kevin Durant': '201142','Russell Westbrook': '201566'}#,
     #            'Lebron James': '2544'}
     seasons = ['2015-16']
-    playoffs = True
+    playoffs = False
     away = False #True
     hexbins = "C:\\PROJECTS\\R&D\\NBA\\Part_II.gdb\\Court_Hexibins"
 
-    gdb = "C:/PROJECTS/R&D/NBA/SC_Playoffs_2015_16.gdb"
+    gdb = "C:/PROJECTS/R&D/NBA/KD_RegSeason_2015_16.gdb"
 
     #season= '2014-15'
     for player in players:
