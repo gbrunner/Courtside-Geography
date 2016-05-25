@@ -266,9 +266,9 @@ require([
     missesCameraBtn.addEventListener('click', function() {
       view.goTo({
         position: {
-          x: 0.0037504663085195862,
-          y: 0.01260657228669327,
-          z: 1000
+          x: 0,
+          y: 0,
+          z: -1000
         },
         tilt: 180,
         heading: 270
