@@ -9,10 +9,10 @@ require([
   'esri/views/SceneView',
   'esri/layers/GraphicsLayer',
   'esri/symbols/SimpleMarkerSymbol',
-  
-  "esri/Graphic",
-  "esri/geometry/Point",
-  
+
+  'esri/Graphic',
+  'esri/geometry/Point',
+
   'esri/widgets/Home',
 
   'dojo/domReady!'
@@ -26,16 +26,16 @@ require([
     '//tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/Dark_Basketball_Court/MapServer';
   var hexbinsFeatureServiceUrl =
     '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_RegSeason_2015_16/FeatureServer/1';
-    //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
+  //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
   var missesFeatureServiceUrl =
     '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_RegSeason_2015_16/FeatureServer/0';
-    //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
+  //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
 
   var tileLayer = new TileLayer({
     url: basketballCourtMapServiceUrl
   });
 
-  
+
   var renderer = new SimpleRenderer({
     symbol: new PolygonSymbol3D({
       symbolLayers: [new ExtrudeSymbol3DLayer()]
@@ -67,24 +67,24 @@ require([
       field: 'Point_Count',
       stops: [{
         value: 1,
-        color: [204,204,255,255],
+        color: [204, 204, 255, 255],
       }, {
         value: 2,
-        color: [167,150,250,255],
-      } , {
+        color: [167, 150, 250, 255],
+      }, {
         value: 4,
-        color: [126,99,242,255],
+        color: [126, 99, 242, 255],
       }, {
         value: 8,
-        color: [81,54,235,255],
+        color: [81, 54, 235, 255],
       }, {
         value: 14,
-        color: [0,0,224,255],
+        color: [0, 0, 224, 255],
       }]
     }]
   });
 
-var missesRenderer = new SimpleRenderer({
+  var missesRenderer = new SimpleRenderer({
     symbol: new PolygonSymbol3D({
       symbolLayers: [new ExtrudeSymbol3DLayer()]
     }),
@@ -115,19 +115,19 @@ var missesRenderer = new SimpleRenderer({
       field: 'Point_Count',
       stops: [{
         value: 1,
-        color: [255,204,204,255],
+        color: [255, 204, 204, 255],
       }, {
         value: 2,
-        color: [255,158,143,255],
-      } , {
+        color: [255, 158, 143, 255],
+      }, {
         value: 3,
-        color: [250,114,90,255],
+        color: [250, 114, 90, 255],
       }, {
         value: 4,
-        color: [237,67,45,255],
+        color: [237, 67, 45, 255],
       }, {
         value: 6,
-        color: [219,0,0,255],
+        color: [219, 0, 0, 255],
       }]
     }]
   });
@@ -137,8 +137,8 @@ var missesRenderer = new SimpleRenderer({
     renderer: renderer,
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
-          mode: "relative-to-ground",
-          offset: 3.0
+      mode: 'relative-to-ground',
+      offset: 3.0
     }
   });
 
@@ -147,34 +147,34 @@ var missesRenderer = new SimpleRenderer({
     renderer: missesRenderer,
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
-          mode: "relative-to-ground", //"on-the-ground"
-          offset: -3.0
+      mode: 'relative-to-ground', //'on-the-ground'
+      offset: -3.0
     }
   });
 
-//-------------
+  //-------------
   var graphicsLayer = new GraphicsLayer();
 
 
-        /*************************
-         * Add a 3D point graphic
-         *************************/
+  /*************************
+   * Add a 3D point graphic
+   *************************/
 
   // London
   var point = new Point({
-    x: 0,
-    y: 47,
-    z: 10
-  }),
+      x: 0,
+      y: 47,
+      z: 10
+    }),
 
-  markerSymbol = new SimpleMarkerSymbol({
-    color: [226, 119, 40],
+    markerSymbol = new SimpleMarkerSymbol({
+      color: [226, 119, 40],
 
-    outline: { // autocasts as new SimpleLineSymbol()
-      color: [255, 255, 255],
-      width: 10
-    }
-  });
+      outline: { // autocasts as new SimpleLineSymbol()
+        color: [255, 255, 255],
+        width: 10
+      }
+    });
 
   var pointGraphic = new Graphic({
     geometry: point,
@@ -183,7 +183,7 @@ var missesRenderer = new SimpleRenderer({
 
   graphicsLayer.add(pointGraphic);
   //map.add(graphicsLayer);
-//-----
+  //-----
 
   //tileLayer.opacity = 0.5;
   var map = new Map({
