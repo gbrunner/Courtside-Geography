@@ -209,7 +209,7 @@ require([
         y: 0,
         z: 500
       },
-      heading: -90,
+      heading: 270,
       tilt: 45
     },
     environment: {
@@ -223,6 +223,12 @@ require([
     view.clippingArea = tileLayer.fullExtent;
     view.extent = tileLayer.fullExtent;
 
+    var homeBtn = new Home({
+      view: view
+    }, 'homeDiv');
+    homeBtn.startup();
+    view.ui.add(homeBtn, 'top-left');
+
     var hitsCameraBtn = document.getElementById('hitsCameraBtn');
     var compareCameraBtn = document.getElementById('compareCameraBtn');
     var missesCameraBtn = document.getElementById('missesCameraBtn');
@@ -232,48 +238,35 @@ require([
       view.ui.add(button, 'top-right');
     });
 
-    hitsCameraBtn.style.display = 'flex';
-    compareCameraBtn.style.dissplay = 'flex';
-    missesCameraBtn.style.display = 'flex';
-
     hitsCameraBtn.addEventListener('click', function() {
-      view.goTo({
-        // position: {
-        //   x: 0,
-        //   y: 0,
-        //   z: 500
-        // },
-        tilt: 45,
-        // heading: -90
-      });
+      // reuse the default camera position already established in the homeBtn
+      homeBtn.go();
     });
+
     compareCameraBtn.addEventListener('click', function() {
       view.goTo({
-        // position: {
-        //   x: 0,
-        //   y: 0,
-        //   z: 500
-        // },
+        position: {
+          latitude: 0.0037504663085195862,
+          longitude: 0.01260657228669327,
+          z: 0
+        },
         tilt: 90,
-        // heading: -90
+        heading: 270
       });
     });
+
     missesCameraBtn.addEventListener('click', function() {
       view.goTo({
-        // position: {
-        //   x: 0,
-        //   y: 0,
-        //   z: 500
-        // },
+        position: {
+          latitude: 0.0037504663085195862,
+          longitude: 0.008914185697493419,
+          z: -992.3279746470496
+        },
         tilt: 135,
-        // heading: -90
+        heading: 270
       });
     });
+
   });
 
-  var homeBtn = new Home({
-    view: view
-  }, 'homeDiv');
-  homeBtn.startup();
-  view.ui.add(homeBtn, 'top-left');
 });
