@@ -158,39 +158,6 @@ var missesRenderer = new SimpleRenderer({
     }
   });
 
-  //tileLayer.opacity = 0.5;
-  var map = new Map({
-    // basemap: 'topo',
-    layers: [tileLayer, featureLayer, missesFeatureLayer]
-  });
-
-  view = new SceneView({
-    container: 'viewDiv',
-    map: map,
-    viewingMode: 'local',
-    constraints: {
-      collision: {
-        enabled: false
-      },
-      tilt: {
-        max: 179.99
-      }
-    },
-    camera: {
-      position: {
-        x: 0,
-        y: 0,
-        z: 750
-      },
-      heading: -90,
-      tilt: 45
-    },
-    environment: {
-      atmosphere: null,
-      starsEnabled: false
-    }
-  });
-
 //-------------
   var graphicsLayer = new GraphicsLayer();
 
@@ -221,8 +188,41 @@ var missesRenderer = new SimpleRenderer({
   });
 
   graphicsLayer.add(pointGraphic);
-  map.add(graphicsLayer);
+  //map.add(graphicsLayer);
 //-----
+
+  //tileLayer.opacity = 0.5;
+  var map = new Map({
+    // basemap: 'topo',
+    layers: [tileLayer, featureLayer, missesFeatureLayer, graphicsLayer]
+  });
+
+  view = new SceneView({
+    container: 'viewDiv',
+    map: map,
+    viewingMode: 'local',
+    constraints: {
+      collision: {
+        enabled: false
+      },
+      tilt: {
+        max: 179.99
+      }
+    },
+    camera: {
+      position: {
+        x: 0,
+        y: 0,
+        z: 500
+      },
+      heading: -90,
+      tilt: 45
+    },
+    environment: {
+      atmosphere: null,
+      starsEnabled: false
+    }
+  });
 
   view.then(function() {
     // Use the exent defined in clippingArea to define the bounds of the scene
