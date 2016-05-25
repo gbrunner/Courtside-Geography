@@ -158,10 +158,10 @@ var missesRenderer = new SimpleRenderer({
     }
   });
 
-  tileLayer.opacity = 0.5;
+  //tileLayer.opacity = 0.5;
   var map = new Map({
     // basemap: 'topo',
-    layers: [tileLayer, featureLayer, missesFeatureLayer]
+    layers: [featureLayer, missesFeatureLayer]
   });
 
   view = new SceneView({
