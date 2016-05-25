@@ -32,7 +32,7 @@ require([
     //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
 
   var tileLayer = new TileLayer({
-    url: basketballCourtMapServiceUrl;
+    url: basketballCourtMapServiceUrl,
     opacity = 0.5
   });
 
