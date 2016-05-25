@@ -144,7 +144,7 @@ var missesRenderer = new SimpleRenderer({
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
           mode: "relative-to-ground",
-          offset: 1.0
+          offset: 3.0
     }
   });
 
@@ -154,14 +154,14 @@ var missesRenderer = new SimpleRenderer({
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
           mode: "relative-to-ground", //"on-the-ground"
-          offset: -1.0
+          offset: -3.0
     }
   });
 
   //tileLayer.opacity = 0.5;
   var map = new Map({
     // basemap: 'topo',
-    layers: [featureLayer, missesFeatureLayer]
+    layers: [tileLayer, featureLayer, missesFeatureLayer]
   });
 
   view = new SceneView({
