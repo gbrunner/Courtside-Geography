@@ -67,22 +67,19 @@ require([
       field: 'Point_Count',
       stops: [{
         value: 1,
-        color: [212,227,245,255],
+        color: [204,204,255,255],
       }, {
         value: 2,
-        color: [133,154,250,255],
+        color: [167,150,250,255],
       } , {
         value: 4,
-        color: [62,90,253,255],
+        color: [126,99,242,255],
       }, {
         value: 8,
-        color: [10,42,244,255],
+        color: [81,54,235,255],
       }, {
         value: 14,
-        color: [132,149,122,255],
-      }, {
-        value: 24,
-        color: [255,255,0,255],
+        color: [0,0,224,255],
       }]
     }]
   });
@@ -101,39 +98,36 @@ var missesRenderer = new SimpleRenderer({
         value: 2,
         size: -20,
       }, {
+        value: 3,
+        size: -30,
+      }, {
         value: 4,
         size: -40,
       }, {
+        value: 6,
+        size: -60,
+      }, {
         value: 8,
         size: -80,
-      }, {
-        value: 14,
-        size: -140,
-      }, {
-        value: 24,
-        size: -240,
       }]
     }, {
       type: 'color',
       field: 'Point_Count',
       stops: [{
         value: 1,
-        color: [212,227,245,255],
+        color: [255,204,204,255],
       }, {
         value: 2,
-        color: [133,154,250,255],
+        color: [255,158,143,255],
       } , {
+        value: 3,
+        color: [250,114,90,255],
+      }, {
         value: 4,
-        color: [62,90,253,255],
+        color: [237,67,45,255],
       }, {
-        value: 8,
-        color: [10,42,244,255],
-      }, {
-        value: 14,
-        color: [132,149,122,255],
-      }, {
-        value: 24,
-        color: [255,255,0,255],
+        value: 6,
+        color: [219,0,0,255],
       }]
     }]
   });
