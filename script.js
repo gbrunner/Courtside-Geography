@@ -200,7 +200,7 @@ require([
         enabled: false
       },
       tilt: {
-        max: 179.99
+        max: 180
       }
     },
     camera: {
