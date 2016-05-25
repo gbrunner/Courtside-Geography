@@ -242,11 +242,11 @@ require([
       // reuse the default camera position already established in the homeBtn
       view.goTo({
         position: {
-          latitude: 0.0037504663085195862,
-          longitude: 0.008914185697493419,
-          z: -992.3279746470496
+          x: 0,
+          y: 0,
+          z: 300
         },
-        tilt: 0,
+        tilt: 1,
         heading: 270
       });
     });
@@ -270,7 +270,7 @@ require([
           longitude: 0.008914185697493419,
           z: -992.3279746470496
         },
-        tilt: 180,
+        tilt: 179,
         heading: 270
       });
     });
