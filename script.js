@@ -243,8 +243,8 @@ require([
       view.goTo({
         position: {
           x: 0,
-          y: 0,
-          z: 300
+          y: 47,
+          z: 1000
         },
         tilt: 1,
         heading: 270
@@ -266,9 +266,9 @@ require([
     missesCameraBtn.addEventListener('click', function() {
       view.goTo({
         position: {
-          latitude: 0.0037504663085195862,
-          longitude: 0.008914185697493419,
-          z: -992.3279746470496
+          x: 0,
+          y: 47,
+          z: -1000
         },
         tilt: 179,
         heading: 270
