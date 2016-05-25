@@ -268,9 +268,9 @@ require([
         position: {
           x: 0,
           y: 0,
-          z: 1000
+          z: -1200
         },
-        tilt: 135,
+        tilt: 0,
         heading: 270
       });
     });
