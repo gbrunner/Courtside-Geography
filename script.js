@@ -222,6 +222,53 @@ require([
     // Use the exent defined in clippingArea to define the bounds of the scene
     view.clippingArea = tileLayer.fullExtent;
     view.extent = tileLayer.fullExtent;
+
+    var hitsCameraBtn = document.getElementById('hitsCameraBtn');
+    var compareCameraBtn = document.getElementById('compareCameraBtn');
+    var missesCameraBtn = document.getElementById('missesCameraBtn');
+
+    [hitsCameraBtn, compareCameraBtn, missesCameraBtn].forEach(function(button) {
+      button.style.display = 'flex';
+      view.ui.add(button, 'top-right');
+    });
+
+    hitsCameraBtn.style.display = 'flex';
+    compareCameraBtn.style.dissplay = 'flex';
+    missesCameraBtn.style.display = 'flex';
+
+    hitsCameraBtn.addEventListener('click', function() {
+      view.goTo({
+        // position: {
+        //   x: 0,
+        //   y: 0,
+        //   z: 500
+        // },
+        tilt: 45,
+        // heading: -90
+      });
+    });
+    compareCameraBtn.addEventListener('click', function() {
+      view.goTo({
+        // position: {
+        //   x: 0,
+        //   y: 0,
+        //   z: 500
+        // },
+        tilt: 90,
+        // heading: -90
+      });
+    });
+    missesCameraBtn.addEventListener('click', function() {
+      view.goTo({
+        // position: {
+        //   x: 0,
+        //   y: 0,
+        //   z: 500
+        // },
+        tilt: 135,
+        // heading: -90
+      });
+    });
   });
 
   var homeBtn = new Home({

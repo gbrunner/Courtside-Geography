@@ -5,13 +5,14 @@
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
   <title>Courtside Geography</title>
   <style>
-    html,
-    body,
-    #viewDiv {
+    html, body, #viewDiv {
       padding: 0;
       margin: 0;
       height: 100%;
       width: 100%;
+    }
+    .off {
+      display: none;
     }
   </style>
 
@@ -19,6 +20,9 @@
 </head>
 
 <body>
+  <button id="hitsCameraBtn" class="off">Hits</button>
+  <button id="compareCameraBtn" class="off">Both</button>
+  <button id="missesCameraBtn" class="off">Misses</button>
   <div id="viewDiv"></div>
   
   <script src="//js.arcgis.com/4.0/"></script>
