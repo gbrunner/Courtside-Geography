@@ -231,10 +231,11 @@ require([
 
     var hitsCameraBtn = document.getElementById('hitsCameraBtn');
     var compareCameraBtn = document.getElementById('compareCameraBtn');
-    var compareBaselineCameraBtn = document.getElementById('compareBaselineCameraBtn');
+    var compareAwayBaselineCameraBtn = document.getElementById('compareAwayBaselineCameraBtn');
+    var compareHomeBaselineCameraBtn = document.getElementById('compareHomeBaselineCameraBtn');
     var missesCameraBtn = document.getElementById('missesCameraBtn');
 
-    [hitsCameraBtn, compareCameraBtn, compareBaselineCameraBtn, missesCameraBtn].forEach(function(button) {
+    [hitsCameraBtn, compareCameraBtn, compareAwayBaselineCameraBtn, compareHomeBaselineCameraBtn, missesCameraBtn].forEach(function(button) {
       button.style.display = 'flex';
       view.ui.add(button, 'top-right');
     });
@@ -264,7 +265,7 @@ require([
       });
     });
 
-    compareBaselineCameraBtn.addEventListener('click', function() {
+    compareAwayBaselineCameraBtn.addEventListener('click', function() {
       view.goTo({
         position: {
           x: 0,
@@ -273,6 +274,18 @@ require([
         },
         tilt: 90,
         heading: 180
+      });
+    });
+
+    compareHomeBaselineCameraBtn.addEventListener('click', function() {
+      view.goTo({
+        position: {
+          x: 0,
+          y: -0.01,
+          z: 0
+        },
+        tilt: 90,
+        heading: 0
       });
     });
 
