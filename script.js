@@ -264,6 +264,18 @@ require([
       });
     });
 
+    compareBaselineCameraBtn.addEventListener('click', function() {
+      view.goTo({
+        position: {
+          x: 0,
+          y: -0.001,
+          z: 0
+        },
+        tilt: 90,
+        heading: 180
+      });
+    });
+
     missesCameraBtn.addEventListener('click', function() {
       view.goTo({
         position: {
