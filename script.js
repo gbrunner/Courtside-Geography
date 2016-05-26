@@ -254,8 +254,8 @@ require([
     compareCameraBtn.addEventListener('click', function() {
       view.goTo({
         position: {
-          x: 0,
-          y: 0.01,
+          x: 0.01,
+          y: 0,
           z: 0
         },
         tilt: 90,
