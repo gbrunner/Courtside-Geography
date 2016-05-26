@@ -255,7 +255,7 @@ require([
       view.goTo({
         position: {
           x: 0,
-          y: 0.001,
+          y: 10,
           z: 0
         },
         tilt: 90,
