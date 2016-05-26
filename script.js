@@ -142,7 +142,7 @@ require([
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
       mode: 'relative-to-ground',
-      offset: 3.0
+      offset: -3.0
     }
   });
 
@@ -152,7 +152,7 @@ require([
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
       mode: 'relative-to-ground', //'on-the-ground'
-      offset: -3.0
+      offset: 3.0
     }
   });
 
@@ -162,7 +162,7 @@ require([
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
       mode: 'relative-to-ground', //'on-the-ground'
-      offset: -3.0
+      offset: 3.0
     }
   });
   
