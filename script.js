@@ -30,7 +30,11 @@ require([
   var missesFeatureServiceUrl =
     '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/KD_RegSeason_2015_16/FeatureServer/0';
   //'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
-
+  var rwMakesFeatureServiceUrl =
+    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/RW_RegSeason_2015_16/FeatureServer/1';  
+  var rwMissesFeatureServiceUrl =
+    'http://services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/RW_RegSeason_2015_16/FeatureServer/0';
+    
   var tileLayer = new TileLayer({
     url: basketballCourtMapServiceUrl
   });
@@ -152,6 +156,26 @@ require([
     }
   });
 
+  var rwMissesFeatureLayer = new FeatureLayer({
+    url: reMissesFeatureServiceUrl,
+    renderer: missesRenderer,
+    mode: FeatureLayer.MODE_SNAPSHOT,
+    elevationInfo: {
+      mode: 'relative-to-ground', //'on-the-ground'
+      offset: -3.0
+    }
+  });
+  
+  var rwMakesFeatureLayer = new FeatureLayer({
+    url: rwMakesFeatureServiceUrl,
+    renderer: renderer,
+    mode: FeatureLayer.MODE_SNAPSHOT,
+    elevationInfo: {
+      mode: 'relative-to-ground', //'on-the-ground'
+      offset: -3.0
+    }
+  });
+
   //-------------
   var graphicsLayer = new GraphicsLayer();
 
@@ -188,7 +212,7 @@ require([
   //tileLayer.opacity = 0.5;
   var map = new Map({
     // basemap: 'topo',
-    layers: [tileLayer, featureLayer, missesFeatureLayer, graphicsLayer]
+    layers: [tileLayer, featureLayer, missesFeatureLayer,rwMakesFeatureLayer,rwMissesFeatureLayer]
   });
 
   view = new SceneView({
