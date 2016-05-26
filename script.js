@@ -157,7 +157,7 @@ require([
   });
 
   var rwMissesFeatureLayer = new FeatureLayer({
-    url: reMissesFeatureServiceUrl,
+    url: rwMissesFeatureServiceUrl,
     renderer: missesRenderer,
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
