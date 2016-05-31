@@ -142,7 +142,7 @@ require([
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
       mode: 'relative-to-ground',
-      offset: -1.0
+      offset: 5.0
     }
   });
 
@@ -152,7 +152,7 @@ require([
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
       mode: 'relative-to-ground', //'on-the-ground'
-      offset: 1.0
+      offset: -5.0
     }
   });
 
@@ -162,7 +162,7 @@ require([
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
       mode: 'relative-to-ground', //'on-the-ground'
-      offset: 1.0
+      offset: -5.0
     }
   });
   
@@ -172,7 +172,7 @@ require([
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
       mode: 'relative-to-ground', //'on-the-ground'
-      offset: -1.0
+      offset: 5.0
     }
   });
 
@@ -212,7 +212,7 @@ require([
   //tileLayer.opacity = 0.5;
   var map = new Map({
     // basemap: 'topo',
-    layers: [tileLayer, featureLayer, missesFeatureLayer,rwMakesFeatureLayer,rwMissesFeatureLayer]
+    layers: [tileLayer, featureLayer, missesFeatureLayer] //,rwMakesFeatureLayer,rwMissesFeatureLayer]
   });
 
   view = new SceneView({
