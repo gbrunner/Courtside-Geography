@@ -138,21 +138,21 @@ def append_seasons(gdb, output_fc):
 ##    for fc in fc_list:
 ##        arcpy.Delete_management(fc)
 
-def create_hex_layers(hexagon_features, shots, output_gdb):
+def create_hex_layers(hexagon_features, shots, output_gdb, name):
     print('Shots Made Hexagons')
     made_shots_layer = 'in_memory\\made_shots_layer'
     query = '"SHOT_MADE_FLAG" = 1'
     arcpy.MakeFeatureLayer_management(shots,made_shots_layer,query,"#","#")
-    arcpy.analysis.SummarizeWithin(hexagon_features, made_shots_layer, os.path.join(output_gdb, "shots_made_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+    arcpy.analysis.SummarizeWithin(hexagon_features, made_shots_layer, os.path.join(output_gdb, name+"_shots_made_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
 
     print('Shots Missed Hexagons')
     missed_shots_layer = 'in_memory\\missed_shots_layer'
     query = '"SHOT_MADE_FLAG" = 0'
     arcpy.MakeFeatureLayer_management(shots,missed_shots_layer,query,"#","#")
-    arcpy.analysis.SummarizeWithin(hexagon_features, missed_shots_layer, os.path.join(output_gdb, "shots_missed_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+    arcpy.analysis.SummarizeWithin(hexagon_features, missed_shots_layer, os.path.join(output_gdb, name+"_shots_missed_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
 
     print('Total Shots Hexagons')
-    arcpy.analysis.SummarizeWithin(hexagon_features, shots, os.path.join(output_gdb, "total_shots_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+    arcpy.analysis.SummarizeWithin(hexagon_features, shots, os.path.join(output_gdb, name+"_total_shots_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
 
 
 
@@ -195,15 +195,22 @@ if __name__ == '__main__':
     #seasons = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
     #gdb = "C:/PROJECTS/R&D/NBA/Steph_Curry.gdb"
     #players = {'Stephen Curry': '201939'}#,
-    players = {'Russell Westbrook': '201566'}
+    #players = {'Russell Westbrook': '201566'}
     #players = {'Kevin Durant': '201142','Russell Westbrook': '201566'}#,
     #            'Lebron James': '2544'}
+
+    players = {'Draymond Green': '203110',
+                'Harrison Barnes': '203084',
+                'Stephen Curry' : '201939',
+                'Klay Thompson' : '202691',
+                'Andre Iguodala' : '2738'}
+
     seasons = ['2015-16']
     playoffs = False
-    away = True #True
+    away = False #True
     hexbins = "C:\\PROJECTS\\R&D\\NBA\\Part_II.gdb\\Court_Hexibins"
 
-    gdb = "C:/PROJECTS/R&D/NBA/RW_RegSeason_2015_16.gdb"
+    gdb = "C:/PROJECTS/R&D/NBA/GSW_DeathLineup_RegSeason_2015_16.gdb"
 
     #season= '2014-15'
     for player in players:
@@ -223,7 +230,7 @@ if __name__ == '__main__':
             print('Adding Player Movement')
             add_player_movement(output_feature_class)
             print('Creating Hexbin Shotchart')
-            create_hex_layers(hexbins, output_feature_class, output_gdb)
+            create_hex_layers(hexbins, output_feature_class, output_gdb, player_name.replace(' ', '_'))
 
     if len(seasons) > 1:
         print('Appending all data to one feature class.')
