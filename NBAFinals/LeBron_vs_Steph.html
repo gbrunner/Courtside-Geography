@@ -183,10 +183,6 @@
     });
 
 
-      //map = new Map({
-    //    basemap: 'satellite',
-  //      ground: 'world-elevation'
-  //    });
 
       view1 = new SceneView({
         id: 'view1',
@@ -197,7 +193,7 @@
           position: {
             x: 0,
             y: 0,
-            z: 250
+            z: 500
           },
         heading: 0,
         tilt: 0
@@ -221,7 +217,7 @@
           position: {
             x: 0,
             y: 0,
-            z: 250
+            z: 500
           },
         heading: 0,
         tilt: 0
@@ -233,45 +229,23 @@
       });
       
 
-/*
-      
-
-      view1.on("click", function(evt) {
-          view1.popup.open({
-              // Set the popup's title to the coordinates of the clicked location
-              title: "LeBron James",
-              location: evt.mapPoint // Set the location of the popup to the clicked location
-          });
-      }); 
-
-      view2.on("click", function(evt) {
-        
-
-          view2.popup.open({
-              // Set the popup's title to the coordinates of the clicked location
-              title: "Steph Curry",
-              location: evt.mapPoint // Set the location of the popup to the clicked location
-          });
-      }); */
-
-
       view1.then(function() {
         // Use the exent defined in clippingArea to define the bounds of the scene
-        console.log('view1')
-        view1.clippingArea = tileLayer.fullExtent;
-        view1.extent = tileLayer.fullExtent;
+        console.log('view1');
+        view1.clippingArea = tileLayer2.fullExtent;
+        view1.extent = tileLayer2.fullExtent;
       
         var homeBtn = new Home({
           view: view1
         }, 'homeDiv');
         homeBtn.startup();
-      view1.ui.add(homeBtn, 'top-left');
+        view1.ui.add(homeBtn, 'top-left');
       });
       
       
       view2.then(function() {
         // Use the exent defined in clippingArea to define the bounds of the scene
-        console.log('view2')
+        console.log('view2');
         view2.clippingArea = tileLayer.fullExtent;
         view2.extent = tileLayer.fullExtent;
       });
