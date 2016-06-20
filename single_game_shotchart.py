@@ -207,43 +207,45 @@ if __name__ == '__main__':
 ##                'Dion Waiters' : '203079'
 ##                }
 
-##    players = {'Draymond Green': '203110',
-##                'Harrison Barnes': '203084',
-##                'Andrew Bogut': '101106',
-##                'Stephen Curry' : '201939',
-##                'Klay Thompson' : '202691',
-##                'Andre Iguodala' : '2738',
-##                'Shaun Livingston' : '2733',
-##                'Marreese Speights' : '201578',
-##                'Leandro Barbosa' : '2571',
-##                'Anderson Varejao' : '2760',
-##                'Festus Ezeli' : '203105',
-##                'Ian Clark':'203546',
-##                'Brandon Rush':'201575'
-##                }
-
-    players = {'LeBron James': '2544',
-                #'Kevin Love' : '201567',
-                'Tristan Thompson' : '202684',
-                'JR Smith' : '2747',
-                'Kyrie Irving' : '202681',
-                'Channing Frye' : '101112',
-                'Iman Shumpert' : '202697',
-                'Richard Jefferson' : '2210',
-                'Matthew Dellavedova' : '203521',
-                'Dahntay Jones' : '2563',
-                'James Jones' : '2592',
-                'Timofey Mozgov' :'202389',
-                'Maurice Williams' :'2590',
-                'Jordan McRae' : '203895'
+    players = {
+                'Draymond Green': '203110',
+                'Harrison Barnes': '203084',
+                'Stephen Curry' : '201939',
+                'Klay Thompson' : '202691',
+                'Andre Iguodala' : '2738',
+                'Shaun Livingston' : '2733',
+                'Marreese Speights' : '201578',
+                'Leandro Barbosa' : '2571',
+                'James Michael McAdoo': '203949',
+                'Anderson Varejao' : '2760',
+                'Festus Ezeli' : '203105',
+                'Ian Clark':'203546',
+                'Brandon Rush':'201575'
                 }
+    #'Andrew Bogut': '101106',
+
+##    players = {'LeBron James': '2544',
+##                'Kevin Love' : '201567',
+##                'Tristan Thompson' : '202684',
+##                'JR Smith' : '2747',
+##                'Kyrie Irving' : '202681',
+##                #'Channing Frye' : '101112',
+##                'Iman Shumpert' : '202697',
+##                'Richard Jefferson' : '2210',
+##                'Matthew Dellavedova' : '203521',
+##                'Dahntay Jones' : '2563',
+##                'James Jones' : '2592',
+##                'Timofey Mozgov' :'202389',
+##                'Maurice Williams' :'2590',
+##                #'Jordan McRae' : '203895'
+##                }
 
     seasons = ['2015-16']
     playoffs = True
-    away = True
+    away = False
     hexbins = "C:\\PROJECTS\\R&D\\NBA\\Part_II.gdb\\Court_Hexibins"
 
-    gdb = "C:/PROJECTS/R&D/NBA/Game3_Cleveland_06082016.gdb"
+    gdb = "C:/PROJECTS/R&D/NBA/Game6____GoldenState_06162016.gdb"
 
     #season= '2014-15'
     for player in players:

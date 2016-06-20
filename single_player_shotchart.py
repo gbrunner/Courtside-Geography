@@ -37,7 +37,7 @@ def get_last_game(player_id, season, playoffs, away):
     else:
         seasontype="Regular%20Season"
     seasonindicator=0
-    nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype, player_id)
+    nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=7&ContextMeasure=FGA' % (season,seasontype, player_id)
     #nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype)
     print(nba_call_url)
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'}
@@ -194,23 +194,23 @@ if __name__ == '__main__':
     #players = {'Stephen Curry': '201939'}
     #seasons = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
     #gdb = "C:/PROJECTS/R&D/NBA/Steph_Curry.gdb"
-    #players = {'Stephen Curry': '201939'}#,
+    players = {'Stephen Curry': '201939'}#,
     #players = {'Russell Westbrook': '201566'}
-    #players = {'Kevin Durant': '201142','Russell Westbrook': '201566'}#,
-    #            'Lebron James': '2544'}
+    #players = {'Lebron James': '2544'}#'Kevin Durant': '201142','Russell Westbrook': '201566'}#,
 
-    players = {'Draymond Green': '203110',
-                'Harrison Barnes': '203084',
-                'Stephen Curry' : '201939',
-                'Klay Thompson' : '202691',
-                'Andre Iguodala' : '2738'}
+
+##    players = {'Draymond Green': '203110',
+##                'Harrison Barnes': '203084',
+##                'Stephen Curry' : '201939',
+##                'Klay Thompson' : '202691',
+##                'Andre Iguodala' : '2738'}
 
     seasons = ['2015-16']
-    playoffs = False
+    playoffs = True
     away = False #True
     hexbins = "C:\\PROJECTS\\R&D\\NBA\\Part_II.gdb\\Court_Hexibins"
 
-    gdb = "C:/PROJECTS/R&D/NBA/GSW_DeathLineup_RegSeason_2015_16.gdb"
+    gdb = "C:/PROJECTS/R&D/NBA/Steph_Curry_Finals.gdb"
 
     #season= '2014-15'
     for player in players:

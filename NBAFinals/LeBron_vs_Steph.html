@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>LeBron James - Shots Made and Missed in the 2016 NBA Finals</title>
+
+  <style>
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.0/"></script>
+
+  <script>
+    var map, view;
+
+    require([
+      "esri/Map",
+
+      "esri/views/MapView",
+      "esri/views/SceneView",
+
+      "esri/core/watchUtils",
+      "esri/core/Scheduler",
+      
+      'esri/layers/FeatureLayer',
+    'esri/layers/TileLayer',
+    'esri/Map',
+    'esri/renderers/SimpleRenderer',
+    'esri/symbols/ExtrudeSymbol3DLayer',
+    'esri/symbols/PolygonSymbol3D',
+    'esri/layers/GraphicsLayer',
+    'esri/symbols/SimpleMarkerSymbol',
+    'esri/widgets/Home',
+
+    "esri/PopupTemplate",
+
+      "dojo/domReady!"
+    ], function(
+      Map,
+      MapView, SceneView,
+      watchUtils,
+      Scheduler,
+      FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, GraphicsLayer, SimpleMarkerSymbol, Home, PopupTemplate
+    ) {
+
+      var basketballCourtMapServiceUrl =
+      '//tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/Dark_Basketball_Court/MapServer';
+        //'http://tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/Slate_BaseketballCourt/MapServer';
+      var hexbinsFeatureServiceUrl =
+        'http://services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/NBA_Finals_WFL/FeatureServer/0';
+      var missesFeatureServiceUrl =
+        'http://services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/NBA_Finals_Steph_Curry_WFL/FeatureServer/0';
+
+      var tileLayer = new TileLayer({
+        url: basketballCourtMapServiceUrl
+       });
+       
+       var tileLayer2 = new TileLayer({
+        url: basketballCourtMapServiceUrl
+       });
+
+      var renderer = new SimpleRenderer({
+        symbol: new PolygonSymbol3D({
+          symbolLayers: [new ExtrudeSymbol3DLayer()]
+          }),
+      visualVariables: [{
+        type: 'size',
+        field: 'Point_Count',
+        stops: [{
+          value: 1,
+          size: 10,
+        }, {
+          value: 2,
+          size: 20,
+        }, {
+          value: 4,
+          size: 40,
+        }, {
+          value: 20,
+          size: 200,
+      }]
+      }, {
+        type: 'color',
+        field: 'Point_Count',
+        stops: [{
+          value: 1,
+          color: [252,184,48,255],
+        }, {
+          value: 2,
+          color: [252,184,48,255],
+        }, {
+          value: 4,
+          color: [173,12,23,255],
+        }, {
+          value: 20,
+          color: [133,0,57,255],
+        }]
+      }]
+    });
+    
+    var missesRenderer = new SimpleRenderer({
+      symbol: new PolygonSymbol3D({
+        symbolLayers: [new ExtrudeSymbol3DLayer()]
+      }),
+      visualVariables: [{
+        type: 'size',
+        field: 'Point_Count',
+        stops: [{
+          value: 1,
+          size: 10,
+        }, {
+          value: 2,
+          size: 20,
+        }, {
+          value: 3,
+          size: 30,
+        }]
+      }, {
+        type: 'color',
+        field: 'Point_Count',
+        stops: [{
+          value: 1,
+          color: [127,205,187,255], //[255,255,204,255], //[253, 185, 39, 255],  //
+        }, {
+          value: 2,
+          color: [0,107,182,255], //[127,205,187,255],
+        }, {
+          value: 3,
+          color: [37,52,148,255],// [0,107,182,255],
+        }]
+      }]
+    });
+    
+
+    var sc_template = new PopupTemplate({
+        // ZIP is the name of a field in the service containing the zip code number of the feature
+        title: "Steph Curry Made {Point_Count} Shots"
+    });
+
+    var lbj_template = new PopupTemplate({
+        // ZIP is the name of a field in the service containing the zip code number of the feature
+        title: "LeBron James Made {Point_Count} Shots"
+    });
+
+    var missesFeatureLayer = new FeatureLayer({
+    url: missesFeatureServiceUrl,
+    outFields: ["*"],
+    popupTemplate: sc_template,
+    renderer: missesRenderer,
+    mode: FeatureLayer.MODE_SNAPSHOT,
+    elevationInfo: {
+      mode:'on-the-ground'
+    }
+    });
+    
+      var featureLayer = new FeatureLayer({
+      url: hexbinsFeatureServiceUrl,
+      outFields: ["*"],
+      popupTemplate: lbj_template,
+      renderer: renderer,
+      mode: FeatureLayer.MODE_SNAPSHOT,
+      elevationInfo: {
+        mode: 'on-the-ground'
+      }
+    });
+    
+    var basketball_map_makes = new Map({
+    // basemap: 'topo',
+      layers: [tileLayer2, featureLayer] //,rwMakesFeatureLayer,rwMissesFeatureLayer]
+    });
+    
+    
+    var basketball_map_misses = new Map({
+    // basemap: 'topo',
+      layers: [tileLayer, missesFeatureLayer] //,rwMakesFeatureLayer,rwMissesFeatureLayer]
+    });
+
+
+      //map = new Map({
+    //    basemap: 'satellite',
+  //      ground: 'world-elevation'
+  //    });
+
+      view1 = new SceneView({
+        id: 'view1',
+        container: 'view1Div',
+        map: basketball_map_makes,
+        viewingMode: 'local',
+        camera: {
+          position: {
+            x: 0,
+            y: 0,
+            z: 250
+          },
+        heading: 0,
+        tilt: 0
+        },
+        environment: {
+            atmosphere: null,
+            starsEnabled: false
+          }
+      });
+
+      view2 = new SceneView({
+        id: 'view2',
+        container: 'view2Div',
+        viewingMode: 'local',
+        map: basketball_map_misses,
+        constraints: {
+          // Disable zoom snapping to get the best synchonization
+          snapToZoom: false,
+        }, 
+        camera: {
+          position: {
+            x: 0,
+            y: 0,
+            z: 250
+          },
+        heading: 0,
+        tilt: 0
+        },
+        environment: {
+          atmosphere: null,
+          starsEnabled: false
+        }
+      });
+      
+
+/*
+      
+
+      view1.on("click", function(evt) {
+          view1.popup.open({
+              // Set the popup's title to the coordinates of the clicked location
+              title: "LeBron James",
+              location: evt.mapPoint // Set the location of the popup to the clicked location
+          });
+      }); 
+
+      view2.on("click", function(evt) {
+        
+
+          view2.popup.open({
+              // Set the popup's title to the coordinates of the clicked location
+              title: "Steph Curry",
+              location: evt.mapPoint // Set the location of the popup to the clicked location
+          });
+      }); */
+
+
+      view1.then(function() {
+        // Use the exent defined in clippingArea to define the bounds of the scene
+        console.log('view1')
+        view1.clippingArea = tileLayer.fullExtent;
+        view1.extent = tileLayer.fullExtent;
+      
+        var homeBtn = new Home({
+          view: view1
+        }, 'homeDiv');
+        homeBtn.startup();
+      view1.ui.add(homeBtn, 'top-left');
+      });
+      
+      
+      view2.then(function() {
+        // Use the exent defined in clippingArea to define the bounds of the scene
+        console.log('view2')
+        view2.clippingArea = tileLayer.fullExtent;
+        view2.extent = tileLayer.fullExtent;
+      });
+
+       /* utility method that synchronizes the viewpoint of a view to other views
+       */
+      var synchronizeView = function(view, others) {
+        others = Array.isArray(others) ? others : [others];
+
+        var viewpointWatchHandle;
+        var viewStationaryHandle;
+        var otherInteractHandlers;
+        var scheduleHandle;
+
+        var clear = function() {
+          if (otherInteractHandlers) {
+            otherInteractHandlers.forEach(function(handle) {
+              handle.remove();
+            });
+          }
+          viewpointWatchHandle && viewpointWatchHandle.remove();
+          viewStationaryHandle && viewStationaryHandle.remove();
+          scheduleHandle && scheduleHandle.remove();
+          otherInteractHandlers = viewpointWatchHandle =
+            viewStationaryHandle = scheduleHandle = null;
+        };
+
+        var interactWatcher = view.watch('interacting,animation',
+          function(newValue) {
+            if (!newValue) {
+              return;
+            }
+            if (viewpointWatchHandle || scheduleHandle) {
+              return;
+            }
+
+            // start updating the other views at the next frame
+            scheduleHandle = Scheduler.schedule(function() {
+              scheduleHandle = null;
+              viewpointWatchHandle = view.watch('viewpoint',
+                function(newValue) {
+                  others.forEach(function(otherView) {
+                    otherView.viewpoint = newValue;
+                  });
+                });
+            });
+
+            // stop as soon as another view starts interacting, like if the user starts panning
+            otherInteractHandlers = others.map(function(otherView) {
+              return watchUtils.watch(otherView,
+                'interacting,animation',
+                function(value) {
+                  if (value) {
+                    clear();
+                  }
+                });
+            });
+
+            // or stop when the view is stationary again
+            viewStationaryHandle = watchUtils.whenTrue(view,
+              'stationary', clear);
+          });
+
+        return {
+          remove: function() {
+            this.remove = function() {};
+            clear();
+            interactWatcher.remove();
+          }
+        }
+      };
+
+      /**
+       * utility method that synchronizes the viewpoints of multiple views
+       */
+      var synchronizeViews = function(views) {
+        var handles = views.map(function(view, idx, views) {
+          var others = views.concat();
+          others.splice(idx, 1);
+          return synchronizeView(view, others);
+        });
+
+        return {
+          remove: function() {
+            this.remove = function() {};
+            handles.forEach(function(h) {
+              h.remove();
+            });
+            handles = null;
+          }
+        }
+      }
+
+      // bind the views
+      synchronizeViews([view1, view2]);
+    });
+  </script>
+</head>
+<body>
+  <div id="view1Div" style="float: left; width: 50%; height: 100%;"></div>
+  <div id="view2Div" style="float: left; width: 50%; height: 100%;"></div>
+</body>
+</body>
+
+</html>
