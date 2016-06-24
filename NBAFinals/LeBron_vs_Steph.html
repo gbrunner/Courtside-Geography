@@ -41,13 +41,15 @@
 
     "esri/PopupTemplate",
 
+    "esri/geometry/Point",
+
       "dojo/domReady!"
     ], function(
       Map,
       MapView, SceneView,
       watchUtils,
       Scheduler,
-      FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, GraphicsLayer, SimpleMarkerSymbol, Home, PopupTemplate
+      FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, GraphicsLayer, SimpleMarkerSymbol, Home, PopupTemplate, Point
     ) {
 
       var basketballCourtMapServiceUrl =
@@ -228,6 +230,46 @@
         }
       });
       
+      view1.on("click", function(event) {
+
+        var view1_point = event.mapPoint;
+        //view1_point.z = 0;
+        var view1_screen_point = view2.toScreen(view1_point);
+        view2.hitTest(view1_screen_point).then(function(response) {
+          var result = response.results[0];
+          console.log("graphic: ",result.graphic);
+          if (result && result.graphic) {
+            view2.popup.title = "Steph Curry Made " + result.graphic.attributes.Point_Count + " Shots";
+            view1_point.z = result.graphic.attributes.Point_Count*10;
+            view2.popup.location = view1_point;//event.mapPoint; 
+            view2.popup.visible = true;
+          }
+          else{
+            view2.popup.visible= false;
+          }
+        });
+      });
+      
+      //view 2
+      view2.on("click", function(event) {
+
+        var view2_point = event.mapPoint;
+
+        var view2_screen_point = view2.toScreen(view2_point);
+        view1.hitTest(view2_screen_point).then(function(response) {
+          var result = response.results[0];
+          if (result && result.graphic) {
+            view1.popup.title = "LeBron James Made " + result.graphic.attributes.Point_Count + " Shots";
+            view2_point.z = result.graphic.attributes.Point_Count*10;
+            view1.popup.location = view2_point;//event.mapPoint;
+            view1.popup.visible = true;
+          }
+          else{
+            view1.popup.visible= false;
+          }
+        });
+      });
+
 
       view1.then(function() {
         // Use the exent defined in clippingArea to define the bounds of the scene
