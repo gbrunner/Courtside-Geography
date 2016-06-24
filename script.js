@@ -139,6 +139,8 @@ require([
 
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
+    outFields: ["*"],
+    popupTemplate: made_template,
     renderer: renderer,
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
@@ -149,6 +151,8 @@ require([
 
   var missesFeatureLayer = new FeatureLayer({
     url: missesFeatureServiceUrl,
+    outFields: ["*"],
+    popupTemplate: miss_template,
     renderer: missesRenderer,
     mode: FeatureLayer.MODE_SNAPSHOT,
     elevationInfo: {
@@ -175,6 +179,16 @@ require([
       mode: 'relative-to-ground', //'on-the-ground'
       offset: 2.5
     }
+  });
+
+  var made_template = new PopupTemplate({
+        // ZIP is the name of a field in the service containing the zip code number of the feature
+        title: "Kevin Durant Made {Point_Count} Shots"
+  });
+
+  var miss_template = new PopupTemplate({
+        // ZIP is the name of a field in the service containing the zip code number of the feature
+        title: "Kevin Durant Missed {Point_Count} Shots"
   });
 
   //-------------
