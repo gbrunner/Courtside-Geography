@@ -139,6 +139,16 @@ require([
     }]
   });
 
+  var made_template = new PopupTemplate({
+        // ZIP is the name of a field in the service containing the zip code number of the feature
+        title: "Kevin Durant Made {Point_Count} Shots"
+  });
+
+  var miss_template = new PopupTemplate({
+        // ZIP is the name of a field in the service containing the zip code number of the feature
+        title: "Kevin Durant Missed {Point_Count} Shots"
+  });
+
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
     outFields: ["*"],
@@ -181,16 +191,6 @@ require([
       mode: 'relative-to-ground', //'on-the-ground'
       offset: 2.5
     }
-  });
-
-  var made_template = new PopupTemplate({
-        // ZIP is the name of a field in the service containing the zip code number of the feature
-        title: "Kevin Durant Made {Point_Count} Shots"
-  });
-
-  var miss_template = new PopupTemplate({
-        // ZIP is the name of a field in the service containing the zip code number of the feature
-        title: "Kevin Durant Missed {Point_Count} Shots"
   });
 
   //-------------
