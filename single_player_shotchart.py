@@ -1,14 +1,11 @@
-#-------------------------------------------------------------------------------
-# Name:        single_player_shotchart.py
-# Purpose:     This script creates an NBA shot chart that can be visualized in
-#              ArcGIS.
-#
-# Author:      Gregory Brunner
-#
-# Created:     01/10/2015
-# Copyright:
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
+"""-----------------------------------------------------------------------------
+Name:        single_player_shotchart.py
+Purpose:     This script creates an NBA shot chart that can be visualized in
+             ArcGIS.
+Author:      Gregory Brunner, Esri
+Created:     October 1, 2015
+Last Update: August 16, 2016
+-----------------------------------------------------------------------------"""
 
 from __future__ import division
 
@@ -38,15 +35,10 @@ def get_last_game(player_id, season, playoffs, away):
         seasontype="Regular%20Season"
     seasonindicator=0
     nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype, player_id)
-    #nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype)
     print(nba_call_url)
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'}
     response = requests.get(nba_call_url, headers=headers)
-    #print(response)
     data = response.json()
-    #req = urllib2.Request(nba_call_url)
-    #plays=urllib2.urlopen(req) #nba_call_url)
-    #data=json.load(plays)
 
     for row in data['resultSets'][0]['rowSet']:
         three=0
@@ -104,17 +96,6 @@ def populate_feature_class(rowValues, output_feature_class):
         c.insertRow(row)
     del c
 
-##def copy_to_shapefile(in_fc, out_fc):
-##    #arcpy.Project_management(in_fc, in_fc+'_proj', out_coor_system="GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]", transform_method="", in_coor_system="PROJCS['WGS_1984_Web_Mercator_Auxiliary_Sphere',GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Mercator_Auxiliary_Sphere'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Standard_Parallel_1',0.0],PARAMETER['Auxiliary_Sphere_Type',0.0],UNIT['Meter',1.0]]", preserve_shape="NO_PRESERVE_SHAPE", max_deviation="")
-##    arcpy.Project_management(in_fc, in_fc+'_proj', out_coor_system="PROJCS['WGS_1984_Web_Mercator_Auxiliary_Sphere',GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Mercator_Auxiliary_Sphere'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Standard_Parallel_1',0.0],PARAMETER['Auxiliary_Sphere_Type',0.0],UNIT['Meter',1.0]]", transform_method="", in_coor_system="GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]", preserve_shape="NO_PRESERVE_SHAPE", max_deviation="")
-##    #arcpy.Project_management(in_fc, in_fc+'_proj', )
-##    #arcpy.CopyFeatures_management(in_fc, out_fc)
-
-def get_rows(data_set, fields):
-    with arcpy.da.SearchCursor(data_set, fields) as cursor:
-        for row in cursor:
-            yield row
-
 def add_player_movement(fc):
     field_to_add = ('MOVEMENT')
     arcpy.AddField_management(fc, field_to_add, "TEXT", "", "", 255)
@@ -155,32 +136,6 @@ def create_hex_layers(hexagon_features, shots, output_gdb, name):
     arcpy.analysis.SummarizeWithin(hexagon_features, shots, os.path.join(output_gdb, name+"_total_shots_hexbins"), "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
 
 
-
-##def write_to_csv(fc, csv_file):
-##    data_set = fc
-##    output = csv_file
-##    fieldnames = ("SHAPE@X","SHAPE@Y","SHOT_MADE_FLAG")
-##    rows = get_rows(data_set, fieldnames)
-##    f = open(output,'wt')
-##    out_writer = csv.writer(f)
-##    out_writer.writerow(fieldnames)
-##    for row in rows:
-##        out_writer.writerow(row)
-
-
-##players = {'lebron james': '2544',
-##    'kevin durant': '201142',
-##    'anthony davis': '203076',
-##    'stephen curry': '201939',
-##    'james harden': '201935',
-##    'chris paul': '101108',
-##    'russel westbrook': '201566',
-##    'blake griffin': '201933',
-##    'marc gasol': '201188',
-##    'kawhi leonard': '202695'}
-
-
-
 if __name__ == '__main__':
 
 ##    players = {'Kobe Bryant': '977' }
@@ -203,11 +158,11 @@ if __name__ == '__main__':
             'Victor Oladipo': '203506'}
 
 
+    players = {'Russell Westbrook': '201566'}
     seasons = ['2015-16']
     playoffs = False
     away = False #True
-    hexbins = "C:\\PROJECTS\\R&D\\NBA\\Part_II.gdb\\Court_Hexibins"
-
+    hexbins = "C:/PROJECTS/R&D/NBA/Part_II.gdb/Court_Hexibins"
     gdb = "C:/PROJECTS/R&D/NBA/OKC_USER_GROUP/SCAUG.gdb"
 
     #season= '2014-15'
