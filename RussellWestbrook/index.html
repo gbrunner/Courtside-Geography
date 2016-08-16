@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Courtside Geography</title>
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    .off {
+      display: none;
+    }
+  </style>
+
+  <link rel="stylesheet" href="//js.arcgis.com/4.0/esri/css/main.css">
+</head>
+
+<body>
+  <button id="hitsCameraBtn" class="off">KD Shots Made (2015-16)</button>
+  <button id="compareCameraBtn" class="off">Made vs. Missed Sideline (2015-16)</button>
+  <button id="compareAwayBaselineCameraBtn" class="off">Made vs. Missed Away Baseline (2015-16)</button>
+  <button id="compareHomeBaselineCameraBtn" class="off">Made vs. Missed Home Baseline (2015-16)</button>
+  <button id="missesCameraBtn" class="off">KD Shots Missed (2015-16)</button>
+  <div id="viewDiv"></div>
+  
+  <script src="//js.arcgis.com/4.0/"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>
