@@ -57,36 +57,36 @@ require([
         value: 2,
         size: 20,
       }, {
-        value: 4,
-        size: 40,
-      }, {
         value: 8,
         size: 80,
       }, {
-        value: 14,
-        size: 140,
+        value: 17,
+        size: 170,
       }, {
-        value: 24,
-        size: 240,
+        value: 29,
+        size: 290,
+      }, {
+        value: 96,
+        size: 960,
       }]
     }, {
       type: 'color',
       field: 'Point_Count',
       stops: [{
         value: 1,
-        color: [204, 204, 255, 255],
+        color: [247,251,255,255],
       }, {
         value: 2,
-        color: [167, 150, 250, 255],
-      }, {
-        value: 4,
-        color: [126, 99, 242, 255],
+        color: [198,219,239,255],
       }, {
         value: 8,
-        color: [81, 54, 235, 255],
+        color: [107,174,214,255],
       }, {
-        value: 14,
-        color: [0, 0, 224, 255],
+        value: 17,
+        color: [0,125,195,255],
+      }, {
+        value: 29,
+        color: [0,44,98,255],
       }]
     }]
   });
@@ -102,39 +102,36 @@ require([
         value: 1,
         size: -10,
       }, {
-        value: 2,
-        size: -20,
-      }, {
         value: 3,
         size: -30,
       }, {
-        value: 4,
-        size: -40,
+        value: 7,
+        size: -70,
       }, {
-        value: 6,
-        size: -60,
+        value: 11,
+        size: -110,
       }, {
-        value: 8,
-        size: -80,
+        value: 15,
+        size: -150,
       }]
     }, {
       type: 'color',
       field: 'Point_Count',
       stops: [{
         value: 1,
-        color: [255, 204, 204, 255],
-      }, {
-        value: 2,
-        color: [255, 158, 143, 255],
+        color: [254,240,217,255],
       }, {
         value: 3,
-        color: [250, 114, 90, 255],
+        color: [253,204,138,255],
       }, {
-        value: 4,
-        color: [237, 67, 45, 255],
+        value: 7,
+        color: [252,141,89,255],
       }, {
-        value: 6,
-        color: [219, 0, 0, 255],
+        value: 11,
+        color: [240,81,51,255],
+      }, {
+        value: 15,
+        color: [179,0,0,255],
       }]
     }]
   });
