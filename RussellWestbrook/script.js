@@ -67,7 +67,7 @@ require([
         size: 290,
       }, {
         value: 96,
-        size: 960,
+        size: 320,
       }]
     }, {
       type: 'color',
@@ -102,8 +102,8 @@ require([
         value: 1,
         size: -10,
       }, {
-        value: 3,
-        size: -30,
+        value: 2,
+        size: -20,
       }, {
         value: 7,
         size: -70,
@@ -121,7 +121,7 @@ require([
         value: 1,
         color: [254,240,217,255],
       }, {
-        value: 3,
+        value: 2,
         color: [253,204,138,255],
       }, {
         value: 7,
@@ -138,12 +138,12 @@ require([
 
   var made_template = new PopupTemplate({
         // ZIP is the name of a field in the service containing the zip code number of the feature
-        title: "Kevin Durant Made {Point_Count} Shots"
+        title: "Russell Westbrook Made {Point_Count} Shots"
   });
 
   var miss_template = new PopupTemplate({
         // ZIP is the name of a field in the service containing the zip code number of the feature
-        title: "Kevin Durant Missed {Point_Count} Shots"
+        title: "Russell Westbrook Missed {Point_Count} Shots"
   });
 
   var featureLayer = new FeatureLayer({
