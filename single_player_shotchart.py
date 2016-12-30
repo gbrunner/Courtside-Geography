@@ -32,9 +32,10 @@ def get_last_game(player_id, season, playoffs, away):
     if playoffs:
         seasontype="Playoffs"
     else:
-        seasontype="Regular%20Season"
+        seasontype="Regular+Season"
     seasonindicator=0
-    nba_call_url='http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype, player_id)
+    #nba_call_url = 'http://stats.nba.com/stats/shotchartdetail?Season=%s&SeasonType=%s&TeamID=0&PlayerID=%s&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&Dateto=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextMeasure=FGA' % (season,seasontype, player_id)
+    nba_call_url = 'http://stats.nba.com/stats/shotchartdetail?AheadBehind=&CFID=&CFPARAMS=&ClutchTime=&Conference=&ContextFilter=&ContextMeasure=FGM&DateFrom=&DateTo=&Division=&EndPeriod=10&EndRange=28800&GameEventID=&GameID=&GameSegment=&GroupID=&GroupQuantity=5&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&Period=0&PlayerID=%s&PlayerPosition=&PointDiff=&Position=&RangeType=0&RookieYear=&Season=%s&SeasonSegment=&SeasonType=%s&ShotClockRange=&StartPeriod=1&StartRange=0&StarterBench=&TeamID=0&VsConference=&VsDivision=' % (player_id, season, seasontype)
     print(nba_call_url)
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0'}
     response = requests.get(nba_call_url, headers=headers)
@@ -163,7 +164,7 @@ if __name__ == '__main__':
     playoffs = False
     away = False #True
     hexbins = "C:/PROJECTS/R&D/NBA/Part_II.gdb/Court_Hexibins"
-    gdb = "C:/PROJECTS/R&D/NBA/OKC_USER_GROUP/SCAUG.gdb"
+    gdb = "C:/PROJECTS/R&D/NBA/OKC_USER_GROUP/Testing_Update.gdb"
 
     #season= '2014-15'
     for player in players:
