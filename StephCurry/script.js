@@ -89,8 +89,8 @@ require([
   
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
-    outFields: ["*"],
-    popupTemplate: popupTemplate,
+    /*outFields: ["*"],
+    popupTemplate: popupTemplate,*/
     definitionExpression: "GAME_DATE='2016-10-28'",
     renderer: renderer
   });
