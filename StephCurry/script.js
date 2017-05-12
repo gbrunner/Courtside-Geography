@@ -22,8 +22,9 @@ require([
   var basketballCourtMapServiceUrl =
     '//tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/Dark_Basketball_Court/MapServer';
   var hexbinsFeatureServiceUrl =
-    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/StephCurry_2016_17_WFL1/FeatureServer/0';
-  /*'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
+    '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/StephCurry_Hexbins_2016_17_WFL1/FeatureServer/0';
+   /*'//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/StephCurry_2016_17_WFL1/FeatureServer/0';
+  '//services1.arcgis.com/g2TonOxuRkIqSOFx/arcgis/rest/services/Scene_NBA_Test2_WFL/FeatureServer/0';
    */
   var tileLayer = new TileLayer({
     url: basketballCourtMapServiceUrl
