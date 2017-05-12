@@ -1,13 +1,17 @@
 import arcpy
 import os
+import datetime
+
+arcpy.env.overwriteOutput=True
 
 #input point fc
 fc = r'C:\PROJECTS\BASKETBALL\RW_2016_17\stats_sc.gdb\Stephen_Curry_2016_17'#'C:\PROJECTS\BASKETBALL\RW_2016_17\stats.gdb\Russell_Westbrook_2016_17'
+court_hexbin_fc = r'C:\PROJECTS\BASKETBALL\Courtside-Geography\Part_II.gdb\Court_Hexibins'
 
-cum_point_gdb = r'C:\PROJECTS\BASKETBALL\RW_2016_17\stats_sc_cum.gdb'
-cum_hex_gdb = r'C:\PROJECTS\BASKETBALL\RW_2016_17\stats_sc_cum_hex.gdb'
-cum_raster_gdb = r'C:\PROJECTS\BASKETBALL\RW_2016_17\stats_sc_cum_raster.gdb'
-cum_md_gdb = r'C:\PROJECTS\BASKETBALL\RW_2016_17\stats_sc_cum_mosaic.gdb'
+cum_point_gdb = r'C:\PROJECTS\BASKETBALL\SC_2016_17\stats_sc_cum_2.gdb'
+cum_hex_gdb = r'C:\PROJECTS\BASKETBALL\SC_2016_17\stats_sc_cum_hex_2.gdb'
+cum_raster_gdb = r'C:\PROJECTS\BASKETBALL\SC_2016_17\stats_sc_cum_raster_2.gdb'
+cum_md_gdb = r'C:\PROJECTS\BASKETBALL\SC_2016_17\stats_sc_cum_mosaic_2.gdb'
 cum_md_name = "cumulative_shots_merged"
 
 if not arcpy.Exists(cum_point_gdb):
@@ -47,49 +51,59 @@ for date in unique_game_dates:
     out_fc_name = 'game_'+str(date.year)+'_'+str(date.month)+'_'+str(date.day)
     out_raster_name = out_fc_name+'_raster'
     out_hexbin_name = out_fc_name+'_hexbin'
-    out_fc = os.path.join(out_gdb, out_fc_name)
-    out_hex_fc = os.path.join(out_gdb, out_hexbin_name)
-    out_raster = os.path.join(out_gdb, out_raster_name)
-    wc = "pdate <= date '%s'" % (date) #
-    print(wc)
-    arcpy.Select_analysis(fc, out_fc, where_clause=wc)
+    out_fc = os.path.join(cum_point_gdb, out_fc_name)
+    out_hex_fc = os.path.join(cum_hex_gdb, out_hexbin_name)
+    out_raster = os.path.join(cum_raster_gdb, out_raster_name)
+    if arcpy.Exists(out_fc) == False:
+        wc = "pdate <= date '%s'" % (date) #
+        print(wc)
+        arcpy.Select_analysis(fc, out_fc, where_clause=wc)
 
-    print("created "+ outfile)
-    with arcpy.da.UpdateCursor(out_fc, "pdate") as cursor:
-        for row in cursor:
-            row[0]=date
-            cursor.updateRow(row)
+        print("created "+out_fc)
+        with arcpy.da.UpdateCursor(out_fc, "pdate") as cursor:
+            for row in cursor:
+                row[0]=date
+                cursor.updateRow(row)
 
-    #Create Hexbins
-    print('Total Shots Hexagons')
-    arcpy.analysis.SummarizeWithin(hexagon_features,
-        out_fc,
-        out_hex_fc,
-        "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+        #Create Hexbins
+        print('Total Shots Hexagons')
+        arcpy.analysis.SummarizeWithin(court_hexbin_fc,
+            out_fc,
+            out_hex_fc,
+            "ONLY_INTERSECTING", "SHOT_MADE_FLAG Sum", "ADD_SHAPE_SUM", None, None, "NO_MIN_MAJ", "NO_PERCENT", None)
+        arcpy.AddField_management(out_hex_fc, "GAME_DATE", "DATE", None, None, None, "pdate", "NULLABLE", "NON_REQUIRED", None)
+        print('add field to hexbins')
+        with arcpy.da.UpdateCursor(out_hex_fc, "GAME_DATE") as cursor:
+            for row in cursor:
+                row[0]=date
+                cursor.updateRow(row)
 
 
-    #Feature to Raster
-    arcpy.FeatureToRaster_conversion(out_hex_fc, "COUNT", out_raster, 0.1)
+        #Feature to Raster
+        print("features to raster")
+        arcpy.FeatureToRaster_conversion(out_hex_fc, "Count of Points", out_raster, 0.1)
 
 
 arcpy.env.workspace = cum_point_gdb
 fcs = arcpy.ListFeatureClasses()
 print("Merging Cumulative Point Feature Classes")
-arcpy.Merge_management(fcs, out_memrge)
+arcpy.Merge_management(fcs, out_cum_merge)
 
 arcpy.env.workspace = cum_hex_gdb
 fcs = arcpy.ListFeatureClasses()
 print("Merging Cumulative Hexbin Feature Classes")
-arcpy.Merge_management(fcs, out_memrge)
+arcpy.Merge_management(fcs, out_hexbin_merge)
 
 arcpy.env.workspace = cum_raster_gdb
 rasters = arcpy.ListRasters()
 #Add Raster to Mosaic
-arcpy.AddRastersToMosaicDataset_management(mdname, "Raster Dataset", rasters)
+print('Adding Rasters')
+arcpy.AddRastersToMosaicDataset_management(out_md, "Raster Dataset", rasters)
 #Field Calculation to add dates to rasters in mosaic dataset
-with arcpy.da.UpdateCursor(out_md, ("","GAME_DATE")) as cursor:
-        for row in cursor:
-            game_date = row[0] #and some manipulatioj
-            row[1]=datetime.datetime.strptime(game_date, '%m/%d/%Y')
-            cursor.updateRow(row)
-
+print('Adding Date')
+with arcpy.da.UpdateCursor(out_md, ("Name","GAME_DATE")) as cursor:
+    for row in cursor:
+        game_date = row[0] #and some manipulatioj
+        game_date_nums = game_date.split('_')
+        row[1]=datetime.datetime.strptime(game_date_nums[2]+'/' + game_date_nums[3] + '/'+game_date_nums[1], '%m/%d/%Y')
+        cursor.updateRow(row)
