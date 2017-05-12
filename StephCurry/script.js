@@ -7,12 +7,13 @@ require([
   'esri/symbols/ExtrudeSymbol3DLayer',
   'esri/symbols/PolygonSymbol3D',
   'esri/views/SceneView',
+  'esri/PopupTemplate',
   'esri/widgets/Home',
   'esri/tasks/support/Query',
 
   'dojo/domReady!'
 ], function(
-  FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, SceneView, Home, Query
+  FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, SceneView, PopupTemplate, Home, Query
 ) {
 
 
@@ -81,8 +82,15 @@ require([
     }]
   });
 
+  var popupTemplate = new PopupTemplate({
+        // ZIP is the name of a field in the service containing the zip code number of the feature
+        title: "Steph Curry Attempted {Point_Count} Shots"
+  });
+  
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
+    outFields: ["*"],
+    popupTemplate: popupTemplate,
     definitionExpression: "GAME_DATE='2016-10-28'",
     renderer: renderer
   });
