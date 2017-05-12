@@ -13,6 +13,8 @@ require([
 ], function(
   FeatureLayer, TileLayer, Map, SimpleRenderer, ExtrudeSymbol3DLayer, PolygonSymbol3D, SceneView, Home
 ) {
+	
+
 
   /*var basketballCourtMapServiceUrl =
     '//tiles.arcgis.com/tiles/g2TonOxuRkIqSOFx/arcgis/rest/services/BW_Court_Tiles/MapServer';*/
@@ -79,6 +81,7 @@ require([
 
   var featureLayer = new FeatureLayer({
     url: hexbinsFeatureServiceUrl,
+	definitionExpression: "GAME_DATE='2016-10-28'",
     renderer: renderer
   });
 
@@ -110,6 +113,24 @@ require([
     // Use the exent defined in clippingArea to define the bounds of the scene
     view.clippingArea = tileLayer.fullExtent;
     view.extent = tileLayer.fullExtent;
+	
+	// Queries for all the features in the service (not the graphics in the view)
+    featureLayer.queryFeatures().then(function(results){
+      // prints an array of all the features in the service to the console
+      console.log(results.features);
+	  
+	  var gameDateSlider = document.getElementById('gameDateSlider');
+  
+      gameDateSlider.addEventListener('input', function(evt) {
+	    var dataIndex = evt.target.value;
+	    console.log(dataIndex);
+		
+		// featureLayer.definitionExpression = 'GAME_DATE = ' + ;
+      });
+    
+	});
+	
+	
   });
 
   var homeBtn = new Home({
